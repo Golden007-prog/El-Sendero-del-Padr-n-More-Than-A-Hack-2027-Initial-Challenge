@@ -1,0 +1,194 @@
+{
+  "artifacts": {
+    ".gitattributes": {
+      "bytes": 37,
+      "sha256": "a411e418b866f3cc4095fb8ddf4b8dcfc8a223f07b87fad8c00bab7f716f38b3"
+    },
+    ".gitignore": {
+      "bytes": 99,
+      "sha256": "6993b1ad9e93207d48e15a3c8007e8358fd73ebf73dca8a3f519b753da59f70a"
+    },
+    ".python-version": {
+      "bytes": 7,
+      "sha256": "61141e9590171b900fdf709e7ea8f050d5c2a69198d4a4a1977d7c45186307e5"
+    },
+    "DATA.md": {
+      "bytes": 1836,
+      "sha256": "54e957dad4fd20ad36132e2da2ed83712c00162043526f1534ba02e4b567a60c"
+    },
+    "LICENSE": {
+      "bytes": 1070,
+      "sha256": "56f861ec215a9d79fc723c1b57a9606e5d521332ea5c93bfe8e1ccd7153a3df7"
+    },
+    "NOTICE.md": {
+      "bytes": 2662,
+      "sha256": "28637b5997c4c83714df33cd754cc66493b0d4c5d86618aa124a429b50f45786"
+    },
+    "README.md": {
+      "bytes": 9396,
+      "sha256": "ec668bec64ef129a1a6946afd57b9db742481e8b12c7d1b4a080d975e9b9d25e"
+    },
+    "adaptive_turnovers.py": {
+      "bytes": 15459,
+      "sha256": "4be186601e60ea417d1ac31371c9b93b0b3a7031266d9901ffe49a8e69a39ddd"
+    },
+    "candidate_pipeline.py": {
+      "bytes": 6644,
+      "sha256": "7b5bf2995d6c0c17cc0481398b81920e3fadf29321726ce99e989828d8cc1fcc"
+    },
+    "constrained_turnovers.py": {
+      "bytes": 16102,
+      "sha256": "9443a4cd23c6df1907cdfeac19c784e0a253bfffb95a6b55ecab9601505f3cf0"
+    },
+    "docs/MODEL_CARD.md": {
+      "bytes": 6538,
+      "sha256": "0d90de559702153062653f172feb1ab763ebc3e7a6d373fea73848d7667216e4"
+    },
+    "docs/figures/development-results.svg": {
+      "bytes": 2129,
+      "sha256": "8c7e1112d43edcb6ca3a0ad49dc0a6f562a7425066c40541d40e8403e9fcc6b2"
+    },
+    "docs/figures/pipeline.svg": {
+      "bytes": 2398,
+      "sha256": "633a49afc04d3b14ce0fc6060804622fe11d7c122af1e0e4f7746ca7510fcc66"
+    },
+    "docs/figures/possession-semantics.svg": {
+      "bytes": 2031,
+      "sha256": "e078b10dc5f566c04e01dd8effd39dd25325a7fdf9acf167642221ac48dad2e7"
+    },
+    "docs/figures/trace-cover.svg": {
+      "bytes": 2126,
+      "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
+    },
+    "docs/technical-report.pdf": {
+      "bytes": 19353,
+      "sha256": "3707ff7f485641df1434853aae4d85e12ee2ebb89e80c7b30b1b09b81489f7de"
+    },
+    "evaluation/possession_metrics.py": {
+      "bytes": 34093,
+      "sha256": "32c878630c74fb52a90c301485d6dff806509d8e933b1177b6035ee8e8f42b80"
+    },
+    "evaluation/validate_submission.py": {
+      "bytes": 4281,
+      "sha256": "d716bf6fce9c8a8d334a9258a3bfca63b8153ae9cd98a4bf80fe0d04693af914"
+    },
+    "frozen_helpers.py": {
+      "bytes": 1173,
+      "sha256": "7396a7f21becea2d6c5be166dfc7a433d07f6efc5597ba3ea8b7f2fdcfa13ce2"
+    },
+    "games.py": {
+      "bytes": 10533,
+      "sha256": "473bf0502a28d93ff49fe5c20be4e546e30a9d8fa4112ab50b1ecdaf44233064"
+    },
+    "infer_candidate.py": {
+      "bytes": 3552,
+      "sha256": "5e41854510573187287ec837a6a7e270d0d8574a757e5c1082810ddd55b380ff"
+    },
+    "licenses/METRICA_LICENSE": {
+      "bytes": 1637,
+      "sha256": "0efbc9f27c311f73c2d69ad77cd035a495a6345ff14e903c1c3cf2c356233bdb"
+    },
+    "models/full330-boundary-training.json": {
+      "bytes": 2675,
+      "sha256": "3a2eeb20fae7d5f0ad4556bdcbf04bc878265d947ae7328375ece5039ad36ec8"
+    },
+    "models/full330-boundary.joblib": {
+      "bytes": 543741,
+      "sha256": "c5dd743829864f3c5d4b16c7996325a2bdc3a2427f25c83bf3713a3e4b4d7910"
+    },
+    "models/owner-model.joblib": {
+      "bytes": 542211,
+      "sha256": "3cf20ccb16218e6342547c590e6c9af5285654f8004357b8884ef2352a74d125"
+    },
+    "models/quality-model.joblib": {
+      "bytes": 29261,
+      "sha256": "a256ca00b2350bc4e4ff6bb7d69ae319e8ac1d67888d0df653a4a63ce86676e0"
+    },
+    "models/status-model.joblib": {
+      "bytes": 434847,
+      "sha256": "029e91f49ca385367c97d4aa6b6158df2330edc95e4ab4805faccf8e9676ef26"
+    },
+    "models/timing-model.joblib": {
+      "bytes": 418909,
+      "sha256": "8696e58502e8f902bbae6a77d18e9bcdfb70050575b07047d8a1fc8788f3e962"
+    },
+    "owner_model.py": {
+      "bytes": 17055,
+      "sha256": "2a339c47dd9e06c1108118a674750090bbb546de60c0b7f141b1d035b7a32b9e"
+    },
+    "requirements-lock.txt": {
+      "bytes": 99,
+      "sha256": "0e0d7aeae850625d0436142d74e16499e592aabf3090b34b9f679def3494ff1f"
+    },
+    "requirements-research-lock.txt": {
+      "bytes": 203,
+      "sha256": "c7c578d428f2e7ee6942e20490d441c3ce13760612495384020b3c25ec684fab"
+    },
+    "research_possession/__init__.py": {
+      "bytes": 87,
+      "sha256": "84170071fbc3d835486193f6355481d4dfec6d0bd50c13f4d15101e38565ff15"
+    },
+    "research_possession/boundary_decoder.py": {
+      "bytes": 6333,
+      "sha256": "4505406d3abde25d8933c3c3817296df7eafe163ce1d7ca43103022c92c705e9"
+    },
+    "research_possession/boundary_metrics_v3.py": {
+      "bytes": 11708,
+      "sha256": "561b3528e8e4b592e3779859fcfc945a23af77c17819c3775742b680f054f9cc"
+    },
+    "research_possession/decoder.py": {
+      "bytes": 10740,
+      "sha256": "d70fd10a34c0486762be94719673e360ecbf9272c207c95b27c097a4a776ec29"
+    },
+    "research_possession/interval_quality_v4.py": {
+      "bytes": 13440,
+      "sha256": "bc4fa59fb2b3d4165011bc450d390382753f15f309dc016773cc7be193c0706b"
+    },
+    "research_possession/motion.py": {
+      "bytes": 12173,
+      "sha256": "92bcefe6e8bb5c8a388cc2766bd514fc82848423ae80665ffbefd56b4a1200f2"
+    },
+    "research_possession/precision_decoder.py": {
+      "bytes": 17321,
+      "sha256": "42082973a0dd26fdd7c428f36fc3f11f1aa8d57f6597e51d61d7c0cd64277157"
+    },
+    "research_possession/sportec.py": {
+      "bytes": 9968,
+      "sha256": "5ced25723bb97fd8b4bbeda0454c372b6a564fae95b1be2c7db7b569a9bcd365"
+    },
+    "research_possession/status_model.py": {
+      "bytes": 4603,
+      "sha256": "b78bd0a60261d65c9ba7f61797f5c7ed08a168cb6197df75fe3a15f8fb3a632f"
+    },
+    "research_possession/timing_model.py": {
+      "bytes": 10094,
+      "sha256": "10e1c83f256f8c6ba6646ca4340711eb0f81b6f5a210bd7d531b804794dcda37"
+    },
+    "research_possession/topology_decoder_v4.py": {
+      "bytes": 12169,
+      "sha256": "869b4d6ad37f6f33422779bf5da04c58e7e1773bec934d0bed3cb6755ddae954"
+    },
+    "research_possession/tracking.py": {
+      "bytes": 4854,
+      "sha256": "1ad3815acb6f4316682bf7d1bf25d3ebaadef72df0f2d5b5fe91c3c8f97f67ef"
+    },
+    "sportec-required-assets.json": {
+      "bytes": 6714,
+      "sha256": "57816d529dcda365048c8129aa259b3512cf86d575d949b7887ddca08a983875"
+    }
+  },
+  "expected_output": {
+    "bytes": 1682773,
+    "rows": 199319,
+    "sha256": "bf88d452968524e602429e9039ff314b4310b499a6ef4a30c26a442058e6a907"
+  },
+  "fit_ids": [
+    "J03WOH",
+    "J03WMX",
+    "J03WN1",
+    "J03WOY"
+  ],
+  "pipeline": "constrained_full330",
+  "python": "3.11.9",
+  "schema": "TRACE_PUBLIC_INFERENCE_PACKAGE_V1"
+}

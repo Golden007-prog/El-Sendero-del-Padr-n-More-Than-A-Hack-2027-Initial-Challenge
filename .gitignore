@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+outputs/
+inputs/
+data/
+*.npz
+*.npy
+*.csv
+*.xml
+*.mp4
+*.verification.json

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="310" viewBox="0 0 1200 310" role="img" aria-labelledby="title desc">
+<title id="title">A loose ball does not automatically end possession</title><desc id="desc">An invented semantic example: home control, a pass, loose ball and incidental contact preserve home ownership until controlled away possession. Dead ball is a separate state.</desc>
+<style>text{font-family:Segoe UI,Arial,sans-serif}.small{font-size:15px}.body{font-size:18px}.label{font-size:14px;font-weight:700;letter-spacing:1.5px}.title{font-size:30px;font-weight:700}</style>
+
+<rect width="1200" height="310" rx="18" fill="#f3f7f5"/>
+<text x="36" y="49" fill="#113b34" class="title">Follow control, not every touch</text>
+<text x="36" y="113" fill="#173c36" class="body" font-weight="600">Observation</text>
+<g fill="#e3ede7"><rect x="205" y="82" width="164" height="60"/><rect x="373" y="82" width="141" height="60"/><rect x="518" y="82" width="216" height="60"/></g>
+<rect x="738" y="82" width="228" height="60" fill="#dfeaf4"/><rect x="970" y="82" width="194" height="60" fill="#eee7d5"/>
+<g fill="#173c36" font-size="17" text-anchor="middle"><text x="287" y="119">Home control</text><text x="443" y="119">Pass / flight</text><text x="626" y="108">Loose ball /</text><text x="626" y="130">incidental contact</text><text x="852" y="119">Away control</text><text x="1067" y="119">Stoppage</text></g>
+<text x="36" y="199" fill="#173c36" class="body" font-weight="600">Possession</text><rect x="205" y="166" width="529" height="60" fill="#167a5f"/><rect x="738" y="166" width="228" height="60" fill="#4b7aa3"/><rect x="970" y="166" width="194" height="60" fill="#a9823a"/>
+<g fill="white" text-anchor="middle" font-size="24" font-weight="600"><text x="469" y="205">H</text><text x="852" y="205">A</text><text x="1067" y="205">D</text></g>
+<text x="36" y="276" fill="#527268" class="small">Illustration only. A handover requires controlled opposition possession; a stoppage separates spells.</text>
+</svg>

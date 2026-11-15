@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
+<title id="title">TRACE — recover whole possessions</title><desc id="desc">El Sendero del Padrón. Tracking evidence becomes four-state possession labels. A stylized pitch and invented possession intervals illustrate the approach, not match data.</desc>
+<style>text{font-family:Segoe UI,Arial,sans-serif}.small{font-size:15px}.body{font-size:18px}.label{font-size:14px;font-weight:700;letter-spacing:1.5px}.title{font-size:30px;font-weight:700}</style>
+
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#071e22"/><stop offset="1" stop-color="#153b36"/></linearGradient></defs>
+<rect width="1200" height="440" rx="24" fill="url(#bg)"/>
+<g fill="none" stroke="#5bcba4" stroke-opacity=".18" stroke-width="2">
+<rect x="825" y="44" width="330" height="274" rx="3"/><path d="M990 44v274"/><circle cx="990" cy="181" r="48"/>
+<path d="M825 115h49v132h-49m330-132h-49v132h49"/><path d="M825 148h20v66h-20m330-66h-20v66h20"/></g>
+<text x="60" y="66" fill="#66d6b2" class="label">EL SENDERO DEL PADRÓN · MORE THAN A HACK 2027</text>
+<text x="56" y="162" fill="#ffffff" font-size="88" font-weight="750" letter-spacing="-3">TRACE</text>
+<text x="60" y="215" fill="#ffffff" font-size="31" font-weight="600">Recover whole possessions.</text>
+<text x="60" y="254" fill="#bbd8ce" class="body">Tracking evidence. Learned ownership. Constrained transitions.</text>
+<g transform="translate(60 310)"><rect width="214" height="52" rx="8" fill="#52d5a8"/><rect x="222" width="141" height="52" rx="8" fill="#78a9d6"/><rect x="371" width="107" height="52" rx="8" fill="#eacb87"/><rect x="486" width="76" height="52" rx="8" fill="#abc0c3"/>
+<g fill="#0c292a" font-size="18" font-weight="700" text-anchor="middle"><text x="107" y="33">H · HOME</text><text x="292" y="33">A · AWAY</text><text x="424" y="33">D · DEAD</text><text x="524" y="33">X</text></g></g>
+<text x="60" y="404" fill="#94b7aa" class="small">Frame-level output · Whole-spell evaluation · Reproducible offline inference</text>
+</svg>
