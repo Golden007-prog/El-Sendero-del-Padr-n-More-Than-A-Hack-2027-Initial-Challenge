@@ -27,6 +27,7 @@ The football distinction matters: a pass, loose ball, deflection or contested to
 2. **Estimate team ownership.** A 330-feature model combines ball proximity, control evidence, temporal summaries, motion, visibility and missingness. A sequence decoder produces an initial H/A path with switch cost `0.6`.
 3. **Estimate turnover evidence.** A separate model scores incoming H/A boundaries. Strong boundary evidence lowers the cost of a switch.
 4. **Constrain the final path.** The decoder preserves the order and direction of initial handovers within ±`0.20 s` windows. Additional handovers must form complete return excursions under fixed `0.40 s` duration rules. Dead-ball and unknown support remain unchanged.
+5. **Apply one documented dead-ball window.** The organizers' [FAQ](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/FAQ.md) states that the second half is graded from frame `110,808` but does not kick off until `113,742`, and that those graded frames are dead ball. The final file labels that window `D`. The constant is the organizers' published one; no frame was inspected or labelled by the team.
 
 This composition couples learned local evidence with explicit temporal structure. The constraints limit arbitrary edits and make the final path traceable; they do not guarantee that an initial predicted handover is correct. All parameters and five fitted models are fixed during inference. The method is offline and may use future observations.
 
@@ -79,9 +80,9 @@ The retained output is identified by:
 | Frames | **0–199318**, once each, in order |
 | Labels | **H / A / D / X** |
 | File size | **1,682,773 bytes** |
-| SHA-256 | `bf88d452968524e602429e9039ff314b4310b499a6ef4a30c26a442058e6a907` |
+| SHA-256 | `3a5d6e00aa1ec63dc9560d1a6388cb7a902887ce00ceb83a07e3c958af556430` |
 
-Two previously completed runs from raw inputs regenerated these identical bytes in **31.91 s** and **32.30 s** on the checked host. A clean installation of all 12 pinned distributions also passed. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
+Two runs from raw inputs regenerated these identical bytes, with **63.13 s** and **63.17 s** of inference on the checked host. A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
 
 ## Measured evidence
 
@@ -97,6 +98,12 @@ The constrained stage adds **0.025297** absolute spellF1 over the immediate owne
 **Scope of the evidence.** These results use the same three repeatedly exposed Sportec development matches: J03WPY, J03WQQ and J03WR9. They are neither private challenge scores nor an independent generalization estimate. All seven external matches have been exposed during development. The organizer’s baseline was measured on a different match and is not a valid before/after comparator here.
 
 The method can miss isolated stoppages, carry ownership through a real takeover, or preserve an incorrect initial transition. Cleaner external tracking and differences in provider control/restart conventions also limit transfer. The [technical report](docs/technical-report.pdf) explains the architecture, safeguards and observed trade-offs.
+
+### Checks on the supplied match
+
+No model was trained, tuned or selected on the supplied match. The official evaluator was run **once** on the public five-minute window as a pipeline check, with a written commitment beforehand not to choose any version, threshold or rule from it. It confirmed frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late. On those 17 possessions spellF1 is `0.4182`, with 27 predicted possessions against 17 in the reference. Seventeen possessions cannot rank methods and this is not a full-match estimate; it does show that the file splits possession too often there.
+
+Smart Tagging and the second-camera tracking were analysed and not used for the file. Tagged set pieces already coincide with predicted restarts in 53 of 58 cases, and the broadcast ball fills only 5–9% of frames where the tactical ball is missing. The [technical report](docs/technical-report.pdf) lists every asset tried and dropped.
 
 ## Models and external data
 
@@ -114,6 +121,7 @@ candidate_pipeline.py        Fixed inference composition and integrity checks
 owner_model.py               Ownership features, estimator type and decoder
 adaptive_turnovers.py        Turnover evidence model
 constrained_turnovers.py     Constrained temporal decoder
+documented_structure.py      Organizer-documented second-half kick-off window
 research_possession/         Tracking, status and timing components
 models/                     Five fitted artifacts and boundary provenance
 evaluation/                 Official metrics and CSV validator

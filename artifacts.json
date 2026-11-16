@@ -25,8 +25,8 @@
       "sha256": "28637b5997c4c83714df33cd754cc66493b0d4c5d86618aa124a429b50f45786"
     },
     "README.md": {
-      "bytes": 9396,
-      "sha256": "ec668bec64ef129a1a6946afd57b9db742481e8b12c7d1b4a080d975e9b9d25e"
+      "bytes": 10943,
+      "sha256": "bb7d5e3fa2049772363282dd1a288f7533b33f7682a0ed0ae114570820e48ae7"
     },
     "adaptive_turnovers.py": {
       "bytes": 15459,
@@ -41,8 +41,8 @@
       "sha256": "9443a4cd23c6df1907cdfeac19c784e0a253bfffb95a6b55ecab9601505f3cf0"
     },
     "docs/MODEL_CARD.md": {
-      "bytes": 6538,
-      "sha256": "0d90de559702153062653f172feb1ab763ebc3e7a6d373fea73848d7667216e4"
+      "bytes": 6801,
+      "sha256": "c697ece4baa86e3ec60182c842f387972be250385c96357ff33b6b7317051b6d"
     },
     "docs/figures/development-results.svg": {
       "bytes": 2129,
@@ -61,8 +61,12 @@
       "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
     },
     "docs/technical-report.pdf": {
-      "bytes": 19353,
-      "sha256": "3707ff7f485641df1434853aae4d85e12ee2ebb89e80c7b30b1b09b81489f7de"
+      "bytes": 22815,
+      "sha256": "8731dde6676a044a80c832db39c37f0a208a875b928e74680fa70d912d997801"
+    },
+    "documented_structure.py": {
+      "bytes": 1420,
+      "sha256": "6e1dc7036dd670e5a2c9bf794435ce2ef092d9ced17cac92409aa2531fbd2dc9"
     },
     "evaluation/possession_metrics.py": {
       "bytes": 34093,
@@ -81,8 +85,8 @@
       "sha256": "473bf0502a28d93ff49fe5c20be4e546e30a9d8fa4112ab50b1ecdaf44233064"
     },
     "infer_candidate.py": {
-      "bytes": 3552,
-      "sha256": "5e41854510573187287ec837a6a7e270d0d8574a757e5c1082810ddd55b380ff"
+      "bytes": 3718,
+      "sha256": "ba7d44b5b7a894af5076ddeb2930ce71f1d99d0317c17180c0fca386750b6b7a"
     },
     "licenses/METRICA_LICENSE": {
       "bytes": 1637,
@@ -180,7 +184,7 @@
   "expected_output": {
     "bytes": 1682773,
     "rows": 199319,
-    "sha256": "bf88d452968524e602429e9039ff314b4310b499a6ef4a30c26a442058e6a907"
+    "sha256": "3a5d6e00aa1ec63dc9560d1a6388cb7a902887ce00ceb83a07e3c958af556430"
   },
   "fit_ids": [
     "J03WOH",
