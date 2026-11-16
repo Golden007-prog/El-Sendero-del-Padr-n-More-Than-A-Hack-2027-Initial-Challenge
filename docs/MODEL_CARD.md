@@ -52,7 +52,9 @@ Thirty-three raw observation channels plus centered 0.5/2-second means and contr
 
 The status stage uses fixed interval-quality threshold 0.9 and timing strength 0.5. Owner switch cost is 0.6. Boundary evidence changes the switch cost to `0.6 × (1 − 0.8b)`. The constrained decoder retains original H/A transitions within ±0.20 s, preserves their direction/order, and permits complete return excursions under the fixed 0.40 s rules. Original shorter principal runs remain feasible. D/X masks and period endpoints stay fixed through ownership refinement. These are engineering constraints, not physiological minima.
 
-After decoding, one organizer-documented window is labelled dead ball: the second half is graded from frame 110,808 but does not kick off until 113,742 (organizers' FAQ). This uses the organizers' published constant, not a fitted parameter or a team annotation.
+After decoding, a minimum-control rule from the organizers' written definition is applied: an opponent run shorter than 3.0 s that is immediately preceded and followed by the same team, with no dead ball between, is not a change of possession and takes the surrounding team's label. The threshold is a fixed reading of "a few seconds", not a fitted value. On the three exposed external development matches this rule lowers official spellF1 from 0.537786 to 0.475109, because the provider's labels do record such brief opponent runs; it is applied because the challenge definition excludes them. Its effect on the supplied match is unmeasured.
+
+Then one organizer-documented window is labelled dead ball: the second half is graded from frame 110,808 but does not kick off until 113,742 (organizers' FAQ). This uses the organizers' published constant, not a fitted parameter or a team annotation.
 
 ## Evaluation and limitations
 

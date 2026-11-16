@@ -27,7 +27,8 @@ The football distinction matters: a pass, loose ball, deflection or contested to
 2. **Estimate team ownership.** A 330-feature model combines ball proximity, control evidence, temporal summaries, motion, visibility and missingness. A sequence decoder produces an initial H/A path with switch cost `0.6`.
 3. **Estimate turnover evidence.** A separate model scores incoming H/A boundaries. Strong boundary evidence lowers the cost of a switch.
 4. **Constrain the final path.** The decoder preserves the order and direction of initial handovers within ±`0.20 s` windows. Additional handovers must form complete return excursions under fixed `0.40 s` duration rules. Dead-ball and unknown support remain unchanged.
-5. **Apply one documented dead-ball window.** The organizers' [FAQ](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/FAQ.md) states that the second half is graded from frame `110,808` but does not kick off until `113,742`, and that those graded frames are dead ball. The final file labels that window `D`. The constant is the organizers' published one; no frame was inspected or labelled by the team.
+5. **Require minimum control.** The organizers' [definition](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/CHALLENGE.md) says possession changes only on *controlled* possession: a simple touch, a deflection or an aerial duel won without subsequent control does not count, and a proxy for control is that a player keeps the ball for a few seconds. An opponent run shorter than `3.0 s` that is immediately preceded and followed by the same team, with no dead ball between, is therefore not a change of possession. Such runs are absorbed shortest first. The threshold is a fixed reading of "a few seconds", not a fitted value.
+6. **Apply one documented dead-ball window.** The organizers' [FAQ](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/FAQ.md) states that the second half is graded from frame `110,808` but does not kick off until `113,742`, and that those graded frames are dead ball. The final file labels that window `D`. The constant is the organizers' published one; no frame was inspected or labelled by the team.
 
 This composition couples learned local evidence with explicit temporal structure. The constraints limit arbitrary edits and make the final path traceable; they do not guarantee that an initial predicted handover is correct. All parameters and five fitted models are fixed during inference. The method is offline and may use future observations.
 
@@ -80,9 +81,9 @@ The retained output is identified by:
 | Frames | **0–199318**, once each, in order |
 | Labels | **H / A / D / X** |
 | File size | **1,682,773 bytes** |
-| SHA-256 | `3a5d6e00aa1ec63dc9560d1a6388cb7a902887ce00ceb83a07e3c958af556430` |
+| SHA-256 | `5ac039ea0d6b017689b440f0cd88008921e0d31082d2193b32148afc2632e791` |
 
-Two runs from raw inputs regenerated these identical bytes, with **63.13 s** and **63.17 s** of inference on the checked host. A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
+Two runs from raw inputs regenerated these identical bytes, with **51.76 s** and **50.13 s** of inference on the checked host. A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
 
 ## Measured evidence
 
@@ -95,13 +96,19 @@ Two runs from raw inputs regenerated these identical bytes, with **63.13 s** and
 
 The constrained stage adds **0.025297** absolute spellF1 over the immediate owner comparator. Three original matched events are lost; timing analysis retains the full original cohort and penalizes those losses rather than reporting only surviving events.
 
+The released pipeline adds a minimum-control rule after this stage (step 5). On this same cohort it **lowers** the mean to **0.475109**; why it is applied anyway is explained under *Checks on the supplied match* below.
+
 **Scope of the evidence.** These results use the same three repeatedly exposed Sportec development matches: J03WPY, J03WQQ and J03WR9. They are neither private challenge scores nor an independent generalization estimate. All seven external matches have been exposed during development. The organizer’s baseline was measured on a different match and is not a valid before/after comparator here.
 
 The method can miss isolated stoppages, carry ownership through a real takeover, or preserve an incorrect initial transition. Cleaner external tracking and differences in provider control/restart conventions also limit transfer. The [technical report](docs/technical-report.pdf) explains the architecture, safeguards and observed trade-offs.
 
 ### Checks on the supplied match
 
-No model was trained, tuned or selected on the supplied match. The official evaluator was run **once** on the public five-minute window as a pipeline check, with a written commitment beforehand not to choose any version, threshold or rule from it. It confirmed frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late. On those 17 possessions spellF1 is `0.4182`, with 27 predicted possessions against 17 in the reference. Seventeen possessions cannot rank methods and this is not a full-match estimate; it does show that the file splits possession too often there.
+No model was trained or fitted on the supplied match. The official evaluator was run **once** on the public five-minute window as a pipeline check, on the file before the minimum-control rule existed. It confirmed frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late. On those 17 possessions spellF1 was `0.4182`, with 27 predicted possessions against 17 in the reference. Seventeen possessions cannot rank methods and this is not a full-match estimate.
+
+**What followed from that check, stated plainly.** It showed the file splitting possession more often than the reference. The organizers' definition asks teams to treat the public ground truth as the arbiter of how "controlled possession" is read, so the minimum-control rule (step 5) was added afterwards. Its `3.0 s` threshold was fixed in advance from the written definition and from the three-second control rule of an external annotation scheme. No threshold was compared on the window, and the released file was **not** scored on it. The decision to add the rule was prompted by the check, and that is a use of the window beyond pure pipeline checking.
+
+**The rule lowers the external development score.** On the three exposed Sportec matches official spellF1 falls from `0.537786` to `0.475109` with the rule, because 22.6% of possessions in that provider's labels (269 of 1,192) are opponent runs under three seconds flanked by the same team. That convention is the one the challenge definition excludes. On the supplied match the rule absorbs 66 such runs and the file goes from 415 to 283 possessions; the effect on the official score is unmeasured and could be negative.
 
 Smart Tagging and the second-camera tracking were analysed and not used for the file. Tagged set pieces already coincide with predicted restarts in 53 of 58 cases, and the broadcast ball fills only 5–9% of frames where the tactical ball is missing. The [technical report](docs/technical-report.pdf) lists every asset tried and dropped.
 
@@ -121,6 +128,7 @@ candidate_pipeline.py        Fixed inference composition and integrity checks
 owner_model.py               Ownership features, estimator type and decoder
 adaptive_turnovers.py        Turnover evidence model
 constrained_turnovers.py     Constrained temporal decoder
+controlled_possession.py     Minimum-control rule from the written definition
 documented_structure.py      Organizer-documented second-half kick-off window
 research_possession/         Tracking, status and timing components
 models/                     Five fitted artifacts and boundary provenance
