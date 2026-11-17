@@ -1,13 +1,14 @@
 {
   "feature_count": 330,
-  "model_sha256": "c5dd743829864f3c5d4b16c7996325a2bdc3a2427f25c83bf3713a3e4b4d7910",
+  "fitted_by": "training/fit_heads_seven_matches.py",
+  "model_sha256": "76ac0297101b99a5b68e5fd770cc3649748e3f25536759b274316c96e9736aa0",
   "settings": {
-    "augmentation": "exact team swap and same boundary target; half weight per copy",
+    "augmentation": "exact team swap; half weight per copy",
     "dropped_feature_names": [],
     "early_stopping": false,
     "edge_alignment": "score[t] prices the incoming edge t-1 to t",
     "feature_count": 330,
-    "global_weight_scale": 30194.500000000004,
+    "global_weight_scale": 34410.857142857145,
     "l2_regularization": 2.0,
     "learning_rate": 0.07,
     "max_iter": 160,
@@ -18,67 +19,46 @@
     "sample_target_hz": 5,
     "target_radius_seconds": 0.2,
     "thread_limit": 4,
-    "total_augmented_rows": 120778,
+    "total_augmented_rows": 240876,
     "variant": "adaptive_full"
   },
   "train_ids": [
     "J03WOH",
     "J03WMX",
     "J03WN1",
-    "J03WOY"
+    "J03WOY",
+    "METRICA_SAMPLE_1",
+    "METRICA_SAMPLE_2",
+    "METRICA_SAMPLE_3"
   ],
   "training_counts": {
     "J03WMX": {
       "augmented_rows": 34142,
-      "match_weight_before_global_normalization": 0.9999999999999998,
-      "original_class_weight_before_augmentation": {
-        "boundary": 0.4999999999999999,
-        "nonboundary": 0.5
-      },
-      "present_original_classes": 2,
-      "sample_stride_frames": 5,
-      "sampled_boundary": 857,
-      "sampled_nonboundary": 16214,
       "sampled_original_rows": 17071
     },
     "J03WN1": {
       "augmented_rows": 27344,
-      "match_weight_before_global_normalization": 0.9999999999999999,
-      "original_class_weight_before_augmentation": {
-        "boundary": 0.5,
-        "nonboundary": 0.5
-      },
-      "present_original_classes": 2,
-      "sample_stride_frames": 5,
-      "sampled_boundary": 849,
-      "sampled_nonboundary": 12823,
       "sampled_original_rows": 13672
     },
     "J03WOH": {
       "augmented_rows": 28780,
-      "match_weight_before_global_normalization": 0.9999999999999998,
-      "original_class_weight_before_augmentation": {
-        "boundary": 0.4999999999999999,
-        "nonboundary": 0.5
-      },
-      "present_original_classes": 2,
-      "sample_stride_frames": 5,
-      "sampled_boundary": 644,
-      "sampled_nonboundary": 13746,
       "sampled_original_rows": 14390
     },
     "J03WOY": {
       "augmented_rows": 30512,
-      "match_weight_before_global_normalization": 1.0,
-      "original_class_weight_before_augmentation": {
-        "boundary": 0.5000000000000001,
-        "nonboundary": 0.4999999999999999
-      },
-      "present_original_classes": 2,
-      "sample_stride_frames": 5,
-      "sampled_boundary": 750,
-      "sampled_nonboundary": 14506,
       "sampled_original_rows": 15256
+    },
+    "METRICA_SAMPLE_1": {
+      "augmented_rows": 38058,
+      "sampled_original_rows": 19029
+    },
+    "METRICA_SAMPLE_2": {
+      "augmented_rows": 39264,
+      "sampled_original_rows": 19632
+    },
+    "METRICA_SAMPLE_3": {
+      "augmented_rows": 42776,
+      "sampled_original_rows": 21388
     }
   },
   "use_memory": true

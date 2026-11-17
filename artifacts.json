@@ -21,28 +21,28 @@
       "sha256": "56f861ec215a9d79fc723c1b57a9606e5d521332ea5c93bfe8e1ccd7153a3df7"
     },
     "NOTICE.md": {
-      "bytes": 2662,
-      "sha256": "28637b5997c4c83714df33cd754cc66493b0d4c5d86618aa124a429b50f45786"
+      "bytes": 3356,
+      "sha256": "05ff6b17d722b430816e8a82574df91f67ec78f1ce890e697c120cbfd9bfd8ef"
     },
     "README.md": {
-      "bytes": 10943,
-      "sha256": "bb7d5e3fa2049772363282dd1a288f7533b33f7682a0ed0ae114570820e48ae7"
+      "bytes": 13949,
+      "sha256": "8b1ec2156f32705ee5ec5e33307bb5a5ebbef3f86d3f2a640c7ae2043efd4d92"
     },
     "adaptive_turnovers.py": {
       "bytes": 15459,
       "sha256": "4be186601e60ea417d1ac31371c9b93b0b3a7031266d9901ffe49a8e69a39ddd"
     },
     "candidate_pipeline.py": {
-      "bytes": 6644,
-      "sha256": "7b5bf2995d6c0c17cc0481398b81920e3fadf29321726ce99e989828d8cc1fcc"
+      "bytes": 6899,
+      "sha256": "9f31677bbec1023617af0e2ddc8c23d1f26ad9f41be1f1f49e04ec6680c4fa62"
     },
     "constrained_turnovers.py": {
       "bytes": 16102,
       "sha256": "9443a4cd23c6df1907cdfeac19c784e0a253bfffb95a6b55ecab9601505f3cf0"
     },
     "docs/MODEL_CARD.md": {
-      "bytes": 6801,
-      "sha256": "c697ece4baa86e3ec60182c842f387972be250385c96357ff33b6b7317051b6d"
+      "bytes": 8228,
+      "sha256": "a94a2e07729a6e2ad34ad92037f06060caac765a10f58072b31235e7924ab843"
     },
     "docs/figures/development-results.svg": {
       "bytes": 2129,
@@ -61,8 +61,8 @@
       "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
     },
     "docs/technical-report.pdf": {
-      "bytes": 22815,
-      "sha256": "8731dde6676a044a80c832db39c37f0a208a875b928e74680fa70d912d997801"
+      "bytes": 31920,
+      "sha256": "b5376f4d53d470919153a393f509af961718fd87f20b5176988d41798dd373ea"
     },
     "documented_structure.py": {
       "bytes": 1420,
@@ -92,17 +92,21 @@
       "bytes": 1637,
       "sha256": "0efbc9f27c311f73c2d69ad77cd035a495a6345ff14e903c1c3cf2c356233bdb"
     },
+    "metrica-sample-assets.json": {
+      "bytes": 1930,
+      "sha256": "1bf5d9f42ac396df042f43e20c878c700b62ea27ed192f36054fb55ec6fa8528"
+    },
     "models/full330-boundary-training.json": {
-      "bytes": 2675,
-      "sha256": "3a2eeb20fae7d5f0ad4556bdcbf04bc878265d947ae7328375ece5039ad36ec8"
+      "bytes": 1665,
+      "sha256": "e08dbd0dfa31f7de24b9125c0c27c0109282d0b6a165a519a5c28a23ec96bc76"
     },
     "models/full330-boundary.joblib": {
-      "bytes": 543741,
-      "sha256": "c5dd743829864f3c5d4b16c7996325a2bdc3a2427f25c83bf3713a3e4b4d7910"
+      "bytes": 546383,
+      "sha256": "76ac0297101b99a5b68e5fd770cc3649748e3f25536759b274316c96e9736aa0"
     },
     "models/owner-model.joblib": {
-      "bytes": 542211,
-      "sha256": "3cf20ccb16218e6342547c590e6c9af5285654f8004357b8884ef2352a74d125"
+      "bytes": 542222,
+      "sha256": "6f7ffc7dedcb281c96baea6440ef7f35a9dc5019a3f16286df53c700df0b4e10"
     },
     "models/quality-model.joblib": {
       "bytes": 29261,
@@ -179,12 +183,16 @@
     "sportec-required-assets.json": {
       "bytes": 6714,
       "sha256": "57816d529dcda365048c8129aa259b3512cf86d575d949b7887ddca08a983875"
+    },
+    "training/fit_heads_seven_matches.py": {
+      "bytes": 12854,
+      "sha256": "30572d034ca0e43a26fe09da152b81e598a385cc5d1b05a6ea9f5c6a05dc2672"
     }
   },
   "expected_output": {
     "bytes": 1682773,
     "rows": 199319,
-    "sha256": "3a5d6e00aa1ec63dc9560d1a6388cb7a902887ce00ceb83a07e3c958af556430"
+    "sha256": "cd2529c42a804d60d43d8777babaaebf580926f14e67e646487669d6edf464d3"
   },
   "fit_ids": [
     "J03WOH",

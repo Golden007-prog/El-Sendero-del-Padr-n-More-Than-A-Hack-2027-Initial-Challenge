@@ -80,9 +80,9 @@ The retained output is identified by:
 | Frames | **0–199318**, once each, in order |
 | Labels | **H / A / D / X** |
 | File size | **1,682,773 bytes** |
-| SHA-256 | `3a5d6e00aa1ec63dc9560d1a6388cb7a902887ce00ceb83a07e3c958af556430` |
+| SHA-256 | `cd2529c42a804d60d43d8777babaaebf580926f14e67e646487669d6edf464d3` |
 
-Two runs from raw inputs regenerated these identical bytes, with **63.13 s** and **63.17 s** of inference on the checked host. A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
+Two runs from raw inputs regenerated these identical bytes, with **61.56 s** and **28.80 s** of inference on the checked host. A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
 
 ## Measured evidence
 
@@ -95,19 +95,36 @@ Two runs from raw inputs regenerated these identical bytes, with **63.13 s** and
 
 The constrained stage adds **0.025297** absolute spellF1 over the immediate owner comparator. Three original matched events are lost; timing analysis retains the full original cohort and penalizes those losses rather than reporting only surviving events.
 
+### Seven-match heads
+
+The ownership and boundary heads in this release are fitted on the four Sportec matches plus Metrica Sports' three public sample matches. The change was accepted on a gate fixed in advance: at least +0.010 on held-out sample matches, no sample match lower, and at most 0.010 lost on the Sportec matches.
+
+| Ownership and boundary heads fitted on | Sportec development, 3 matches | Metrica sample matches, each held out |
+|---|---:|---:|
+| Four Sportec matches (earlier editions) | 0.537786 | 0.610233 |
+| **Seven matches (this release)** | **0.531989** | **0.643132** |
+
+Every held-out sample match improves (from 0.636 to 0.655, from 0.604 to 0.639 and from 0.590 to 0.636). The Sportec figure falls by 0.006. Given the four Sportec matches alone, the fitting script reproduces the earlier heads exactly. Three held-out matches with clean tracking are thin evidence; the supplied match's tracking is automatic.
+
 **Scope of the evidence.** These results use the same three repeatedly exposed Sportec development matches: J03WPY, J03WQQ and J03WR9. They are neither private challenge scores nor an independent generalization estimate. All seven external matches have been exposed during development. The organizer’s baseline was measured on a different match and is not a valid before/after comparator here.
 
 The method can miss isolated stoppages, carry ownership through a real takeover, or preserve an incorrect initial transition. Cleaner external tracking and differences in provider control/restart conventions also limit transfer. The [technical report](docs/technical-report.pdf) explains the architecture, safeguards and observed trade-offs.
 
 ### Checks on the supplied match
 
-No model was trained, tuned or selected on the supplied match. The official evaluator was run **once** on the public five-minute window as a pipeline check, with a written commitment beforehand not to choose any version, threshold or rule from it. It confirmed frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late. On those 17 possessions spellF1 is `0.4182`, with 27 predicted possessions against 17 in the reference. Seventeen possessions cannot rank methods and this is not a full-match estimate; it does show that the file splits possession too often there.
+No model was trained or fitted on the supplied match, and no label of it was used to choose anything in the released file.
 
-Smart Tagging and the second-camera tracking were analysed and not used for the file. Tagged set pieces already coincide with predicted restarts in 53 of 58 cases, and the broadcast ball fills only 5–9% of frames where the tactical ball is missing. The [technical report](docs/technical-report.pdf) lists every asset tried and dropped.
+**What the evaluation rewards.** The ranking metric counts each possession once, however long. The organizers publish that a perfect file delivered one second late scores only 0.654, which is possible only if many reference possessions last just a few seconds. Scoring labels against a one-second-late copy of themselves gives 0.557 for the Sportec provider field, 0.627 and 0.679 for possession derived from Metrica's sample events, and 0.748 once opponent runs under three seconds are removed. The released file gives 0.662. No parameter was fitted to these figures; they were used to decide whether brief possessions belong in the file.
+
+**One pipeline check, and a rule that was withdrawn.** The official evaluator was run once on the public five-minute window, on the second edition, to confirm frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late, spellF1 `0.4182` on 17 possessions with 27 predicted. Seventeen possessions cannot rank methods. Because that reading showed more predicted possessions than reference ones, a rule absorbing opponent runs under three seconds was added and published as a third edition. Two external benchmarks then showed it removes real possessions (Sportec development 0.538 without the rule, 0.475 with it; Metrica sample matches 0.610 without, 0.560 with), and the delay figures above say the same. The rule was withdrawn and is not in this release. The released file was not scored on the public window.
+
+Smart Tagging and the second-camera tracking were analysed and not used for the file. Tagged set pieces already coincide with predicted restarts in 53 of 58 cases, and the broadcast ball fills only 5–9% of frames where the tactical ball is missing. The [technical report](docs/technical-report.pdf) lists every asset and idea that was tried and dropped, with the test and the result, and the history of the published editions.
 
 ## Models and external data
 
-Five bundled models cover **status**, **timing**, **interval quality**, **ownership** and **turnover boundaries**. All were fitted using four external Sportec Open DFL matches: J03WOH, J03WMX, J03WN1 and J03WOY. Supplied challenge possession labels and video are not training inputs.
+Five bundled models cover **status**, **timing**, **interval quality**, **ownership** and **turnover boundaries**. Status, timing and interval quality are fitted on four external Sportec Open DFL matches: J03WOH, J03WMX, J03WN1 and J03WOY. Ownership and turnover boundaries are fitted on those four plus Metrica Sports' three public sample matches. Supplied challenge possession labels and video are not training inputs.
+
+The Metrica sample matches come from [metrica-sports/sample-data](https://github.com/metrica-sports/sample-data); we acknowledge Metrica Sports as their source. File identities are in [metrica-sample-assets.json](metrica-sample-assets.json). Their targets are derived from Metrica's human-coded event data by a fixed rule implemented in [training/fit_heads_seven_matches.py](training/fit_heads_seven_matches.py): possession changes only at a RECOVERY or SET PIECE of the other team, and the ball is dead from the end of the event before each set piece to that set piece. The events are Metrica's; the frame-level derivation is ours. The data is not redistributed here.
 
 The targets come from provider `BallStatus` and `BallPossession` fields, mechanically mapped into H/A/D/X. They are not new manual annotations by this team. Their complete frame-level annotation/correction workflow is not established by the available source documentation. See the [model and data card](docs/MODEL_CARD.md) for the exact mapping, training roles and limitations, and [external asset identities](sportec-required-assets.json) for versioned source references.
 
@@ -122,6 +139,8 @@ owner_model.py               Ownership features, estimator type and decoder
 adaptive_turnovers.py        Turnover evidence model
 constrained_turnovers.py     Constrained temporal decoder
 documented_structure.py      Organizer-documented second-half kick-off window
+training/                   Script that fitted the ownership and boundary heads
+metrica-sample-assets.json  Identities of the Metrica sample files used for training
 research_possession/         Tracking, status and timing components
 models/                     Five fitted artifacts and boundary provenance
 evaluation/                 Official metrics and CSV validator

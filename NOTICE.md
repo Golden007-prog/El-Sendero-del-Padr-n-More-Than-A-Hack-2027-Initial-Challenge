@@ -14,7 +14,7 @@ The upstream licence covers its software/documentation. It expressly excludes th
 
 ## External training data
 
-All five fitted models use the Sportec Open DFL release:
+All five fitted models use the Sportec Open DFL release (two of them also use the Metrica sample data described below):
 
 Manuel Bassek, Robert Rein, Hendrik Weber and Daniel Memmert (2025), *An integrated dataset of spatiotemporal and event data in elite soccer*.
 
@@ -25,6 +25,10 @@ Manuel Bassek, Robert Rein, Hendrik Weber and Daniel Memmert (2025), *An integra
 TRACE converts units and coordinates, derives geometric/motion/temporal features, maps provider status and possession fields to targets, and fits statistical estimators. Four matches supply training and three supply development evidence. The original dataset is not included. This attribution does not imply endorsement by the authors, DFL, Sportec or TRACAB.
 
 The trained artifacts are locally fitted models, not redistributed pretrained vision checkpoints. Dataset licensing is separate from the rights over the competition’s supplied match.
+
+## Metrica Sports sample data
+
+The ownership and boundary heads are also fitted on Sample Games 1 to 3 of the public [Metrica Sports sample data](https://github.com/metrica-sports/sample-data), commit `e706dd506b360d69d9d123d5b8026e7294b13996`, and the same matches are used for external evaluation. The repository carries no licence file; its README offers the data to the football analytics community and asks that the source be acknowledged in public use. We acknowledge Metrica Sports as the source. The data is not redistributed here; file identities are recorded in [metrica-sample-assets.json](metrica-sample-assets.json).
 
 ## Excluded data and dependencies
 

@@ -20,6 +20,9 @@ ROOT = Path(__file__).resolve().parent
 FEATURE_KEYS = frozenset(("ball_xy_m", "nearest_m", "player_speed_mps", "player_count", "fps", "pitch",
                           "player_summary", "has_player_summary", "blocks"))
 PREDICTION_KEYS = frozenset(("anchor_v4", "baseline_c0", "constrained"))
+# The ownership and boundary heads are fitted on the four Sportec matches plus the three
+# public Metrica sample matches (training/fit_heads_seven_matches.py).
+HEAD_TRAIN_IDS = TRAIN_IDS + ("METRICA_SAMPLE_1", "METRICA_SAMPLE_2", "METRICA_SAMPLE_3")
 
 
 def digest(path):
@@ -57,7 +60,7 @@ def load_models():
     if not isinstance(models["owner"], OwnershipModel) or not isinstance(models["boundary"], BoundaryModel):
         raise ValueError("Unexpected packaged model types")
     for name in ("owner", "boundary"):
-        if tuple(models[name].train_ids) != TRAIN_IDS or len(models[name].feature_names) != 330:
+        if tuple(models[name].train_ids) != HEAD_TRAIN_IDS or len(models[name].feature_names) != 330:
             raise ValueError("Packaged supervised-head provenance differs")
     if models["boundary"].use_memory is not True:
         raise ValueError("The candidate requires the full330 boundary head")
