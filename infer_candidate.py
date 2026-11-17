@@ -8,7 +8,6 @@ import time
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 from candidate_pipeline import digest, infer, load_features, load_models, validate_package, write_json_exclusive
-from controlled_possession import absorb_uncontrolled_excursions
 from documented_structure import apply_documented_dead
 from games import GAME
 
@@ -41,8 +40,7 @@ def run(data_dir, feature_file, output):
     predictions, audit = infer(features, blocks, load_models())
     if {name: digest(path) for name, path in inputs.items()} != before:
         raise ValueError("Input files changed during inference")
-    labels, audit["minimum_control"] = absorb_uncontrolled_excursions(predictions["constrained"], blocks, features.fps)
-    labels, audit["documented_structure"] = apply_documented_dead(labels, blocks, GAME)
+    labels, audit["documented_structure"] = apply_documented_dead(predictions["constrained"], blocks, GAME)
     validate_package()
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("x", encoding="utf-8", newline="") as stream:
