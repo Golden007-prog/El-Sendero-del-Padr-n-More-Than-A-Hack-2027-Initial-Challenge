@@ -1,7 +1,7 @@
 {
   "feature_count": 330,
   "fitted_by": "training/fit_heads_seven_matches.py",
-  "model_sha256": "76ac0297101b99a5b68e5fd770cc3649748e3f25536759b274316c96e9736aa0",
+  "model_sha256": "0fb8829d143ca24c3c966787a8c387e2ad530eaed06a4b9139766c45defcccdc",
   "settings": {
     "augmentation": "exact team swap; half weight per copy",
     "dropped_feature_names": [],
@@ -11,8 +11,8 @@
     "global_weight_scale": 34410.857142857145,
     "l2_regularization": 2.0,
     "learning_rate": 0.07,
-    "max_iter": 160,
-    "max_leaf_nodes": 15,
+    "max_iter": 800,
+    "max_leaf_nodes": 31,
     "min_samples_leaf": 60,
     "probabilities_calibrated": false,
     "random_state": 2027,

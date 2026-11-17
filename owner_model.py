@@ -30,7 +30,7 @@ RAW_CHANNEL_NAMES = (
     "median_player_speed_mps", *MOTION_NAMES, *EVIDENCE_KEYS,
 )
 MODEL_SETTINGS = {
-    "max_iter": 160, "learning_rate": 0.07, "max_leaf_nodes": 15,
+    "max_iter": 800, "learning_rate": 0.07, "max_leaf_nodes": 31,
     "min_samples_leaf": 60, "l2_regularization": 2.0,
     "random_state": 2027, "early_stopping": False,
 }

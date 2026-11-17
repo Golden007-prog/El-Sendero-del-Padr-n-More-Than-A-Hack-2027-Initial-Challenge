@@ -92,9 +92,9 @@ The retained output is identified by:
 | Frames | **0–199318**, once each, in order |
 | Labels | **H / A / D / X** |
 | File size | **1,682,773 bytes** |
-| SHA-256 | `ee21ca36133fd199b8a9bc3322fabeeab4de7b8417e9b239ba1e29c7b9a68b63` |
+| SHA-256 | `5771a8f50019c9505ad689cc427a8d1db5b07511ec2f6cf47c0eb630ba165717` |
 
-Six runs from raw inputs regenerated these identical bytes on the checked host in about 30 s each; five of them ran under different CPU-feature and math-library settings (single thread, NumPy's optional CPU features disabled, a generic BLAS kernel, and all three together). A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
+Ten runs from raw inputs regenerated these identical bytes on the checked host, in 33 to 75 s each (the time depends on what else the laptop is doing; the bytes do not): five plain runs and five in a test that varies the processor and math-library settings (default, single thread, NumPy's optional CPU features disabled, a generic BLAS kernel, and the last three together). A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
 
 ## Measured evidence
 
@@ -114,9 +114,9 @@ The ownership and boundary heads in this release are fitted on the four Sportec 
 | Ownership and boundary heads fitted on | Sportec development, 3 matches | Metrica sample matches, each held out |
 |---|---:|---:|
 | Four Sportec matches (earlier editions) | 0.537786 | 0.610233 |
-| **Seven matches (this release)** | **0.531989** | **0.643132** |
+| **Seven matches** | **0.531989** | **0.643132** |
 
-Every held-out sample match improves (from 0.636 to 0.655, from 0.604 to 0.639 and from 0.590 to 0.636). The Sportec figure falls by 0.006. Given the four Sportec matches alone, the fitting script reproduces the earlier heads exactly. Three held-out matches with clean tracking are thin evidence; the supplied match's tracking is automatic.
+Every held-out sample match improves (from 0.636 to 0.655, from 0.604 to 0.639 and from 0.590 to 0.636). The Sportec figure falls by 0.006. Given the four Sportec matches alone and the model size of that edition, the fitting script reproduced the earlier heads exactly. Three held-out matches with clean tracking are thin evidence; the supplied match's tracking is automatic. These figures are for the models of the fourth edition (160 iterations, 15 leaves, before the ball-exit rule); the sections below add to them.
 
 **Scope of the evidence.** These results use the same three repeatedly exposed Sportec development matches: J03WPY, J03WQQ and J03WR9. They are neither private challenge scores nor an independent generalization estimate. All seven external matches have been exposed during development. The organizer’s baseline was measured on a different match and is not a valid before/after comparator here.
 
@@ -126,27 +126,47 @@ The method can miss isolated stoppages, carry ownership through a real takeover,
 
 The status models decide stoppages from player movement, which reacts late. On held-out external matches our dead-ball onset was a median 8 to 22 frames later than the provider's, while the first frame with the ball outside the pitch precedes the provider's onset by a median 3 to 4 frames and falls within half a second of it in 90% of cases. Metrica's own sample tracking shows the same lateness: there a missing ball is the provider's dead-ball mark, and our onset was a median 25 to 32 frames late against it. The pipeline therefore starts a stoppage at the moment the tracking shows the ball leaving the pitch (step 5 above; [ball_exit.py](ball_exit.py)).
 
-| Matches (released models, official spellF1) | Without the rule | With the rule |
+| Matches (models of the sixth edition, official spellF1) | Without the rule | With the rule |
 |---|---:|---:|
 | Sportec J03WPY, J03WQQ, J03WR9, held out | 0.531989 | 0.536550 |
 | Metrica sample matches, each held out | 0.643132 | 0.652335 |
 | Sportec J03WOH, J03WMX, J03WN1, J03WOY (replication on the status models' fitting matches) | 0.546375 | 0.551132 |
 
-SpellF1 and macroF1 rise on all ten matches, and spellF1 rises in all 40 further runs with simulated ball loss. With the rule the median onset error is between -3 and +5 frames on every held-out match. **The rule did not reach the size we had set in advance** for the first six matches (+0.008 on the Sportec matches; it gave +0.005), so by that gate alone it would not have been adopted. Because it had improved every run, we repeated it unchanged on four further matches with the criterion, written first, that every match must improve; it did. We report both facts.
+SpellF1 and macroF1 rise on all ten matches, and spellF1 rises in all 40 further runs with simulated ball loss. With the rule the median onset error is between -3 and +5 frames on every held-out match. **The rule did not reach the size we had set in advance** for the first six matches (+0.008 on the Sportec matches; it gave +0.005), so by that gate alone it would not have been adopted. Because it had improved every run, we repeated it unchanged on four further matches with the criterion, written first, that every match must improve; it did. We report both facts. With the larger models of this release the rule adds 0.005 on the Sportec held-out matches (0.552623 to 0.557311) and 0.009 on the Metrica ones (0.673260 to 0.682533).
 
 On the supplied match the rule moves 28 stoppage onsets earlier by a median 19 frames (644 frames, 0.4% of graded frames; only live frames become dead ball). The exits lie on all four boundary lines, and the first outside sighting is at most 0.4 m beyond the line in 90% of cases, so they are line crossings and not high balls projected past the far touchline. This was measured without any label of the supplied match.
 
 Perfect dead-ball status would add about 0.05 on the external matches, so most of that gap remains: stoppages that begin with a whistle are still found late, and some are missed.
 
+### Larger ownership and boundary models
+
+The two models that decide which team has the ball were small (160 boosting iterations, 15 leaves), a setting fixed since the first edition. On 17 November it was tested by nested cross-validation: for each Metrica sample match in turn, the choice is made on the other two matches and scored on the one left out. The gates were written before each run: a mean gain of at least +0.008 on the held-out Metrica matches, none below -0.003, and a limit on any loss on the Sportec matches (0.005 in the first round, none in the second).
+
+| Ownership and boundary models (seven matches, with the ball-exit rule) | Sportec held-out | Metrica held-out, event reference | Metrica held-out, provider dead ball |
+|---|---:|---:|---:|
+| 160 iterations, 15 leaves (sixth edition) | 0.536550 | 0.652335 | 0.611160 |
+| 400 iterations, 31 leaves | 0.552509 | 0.669715 | 0.629017 |
+| **800 iterations, 31 leaves (this release)** | **0.557311** | **0.682533** | **0.638169** |
+
+"Provider dead ball" takes dead ball where Metrica's sample tracking has no ball and the owner from the events; it is the stricter of the two Metrica references.
+
+The first step raised all six held-out matches (nested estimate +0.013). The second passed its gate more narrowly (nested estimate +0.009): four matches rise and two fall, by 0.003 and 0.0002. Tested and dropped along the way: Metrica matches counted double (helps the Metrica matches only), ownership targets limited to frames where the provider tracks a ball (-0.007 against the event reference), 12.5 training rows per second (no change), and 63 leaves (weaker than 31). Under simulated ball loss the larger models keep a gain in every scenario against the sixth edition's; the second step alone changes the Sportec matches by -0.003, -0.003 and +0.003 and the Metrica matches by +0.007, +0.005 and +0.008 (random loss, loss on hand-overs, loss placed as in the supplied match), inside the limit of -0.005 set in advance. The same six matches chose the size, so these remain development scores. [training/fit_heads_seven_matches.py](training/fit_heads_seven_matches.py) reproduces the released models exactly.
+
+**The switching cost was tested and left at 0.6.** With the released models a cost of 0.9 raises held-out spellF1 by 0.009 on the Sportec matches and 0.015 on the Metrica ones, 5 of 6 matches rise, and every ball-loss scenario improves. The rule written in advance picks the cost with the best Metrica score (1.2), and that value failed a robustness condition (-0.013 on the four Sportec fitting matches with the 400-iteration models, -0.010 with the released ones; limit -0.005). No change was released.
+
+**The dead-ball models were tested at the larger size and kept as they are.** Status and timing models with 400 iterations and 31 leaves gain 0.009 on the Sportec matches and lose 0.002 on the Metrica ones; the gate failed.
+
 ### Checks on the supplied match
 
 No model was trained or fitted on the supplied match, and no label of it was used to choose anything in the released file.
 
-**What the evaluation rewards.** The ranking metric counts each possession once, however long. The organizers publish that a perfect file delivered one second late scores only 0.654, which is possible only if many reference possessions last just a few seconds. Scoring labels against a one-second-late copy of themselves gives 0.557 for the Sportec provider field, 0.627 and 0.679 for possession derived from Metrica's sample events, and 0.748 once opponent runs under three seconds are removed. The released file gives 0.657. No parameter was fitted to these figures; they were used to decide whether brief possessions belong in the file.
+**What the evaluation rewards.** The ranking metric counts each possession once, however long. The organizers publish that a perfect file delivered one second late scores only 0.654, which is possible only if many reference possessions last just a few seconds. Scoring labels against a one-second-late copy of themselves gives 0.557 for the Sportec provider field, 0.627 and 0.679 for possession derived from Metrica's sample events, and 0.748 once opponent runs under three seconds are removed. The released file gives 0.641. No parameter was fitted to these figures; they were used to decide whether brief possessions belong in the file.
 
 **One pipeline check, and a rule that was withdrawn.** The official evaluator was run once on the public five-minute window, on the second edition, to confirm frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late, spellF1 `0.4182` on 17 possessions with 27 predicted. Seventeen possessions cannot rank methods. Because that reading showed more predicted possessions than reference ones, a rule absorbing opponent runs under three seconds was added and published as a third edition. Two external benchmarks then showed it removes real possessions (Sportec development 0.538 without the rule, 0.475 with it; Metrica sample matches 0.610 without, 0.560 with), and the delay figures above say the same. The rule was withdrawn and is not in this release. The released file was not scored on the public window.
 
-**Further checks on 17 November (the file did not change).** Three more tests were run on external matches only, each against a gate written in advance. First, the ball was removed from held-out external matches as often as the supplied tracking loses it (12% of live frames in gaps with a 2.5 s median, 76% of dead frames). SpellF1 falls by 0.03 to 0.09, most when the loss falls on hand-overs, and neither a 2 s nor a 3 s minimum-control rule helps (best change +0.003 against a required +0.010). Second, heads fitted on all ten external matches gain 0.010 on the Sportec matches and lose 0.007 on the Metrica sample matches; the gate allowed a loss of 0.005, so they were not adopted. Third, heads fitted on clean plus ball-loss views gain 0.007 to 0.009 under random loss but lose 0.013 on clean Metrica tracking and 0.010 when the loss falls on hand-overs; not adopted. Fourth, the three dead-ball models were refitted with Metrica's sample matches added, taking dead ball where the provider's tracking has no ball. The refit on the four Sportec matches reproduced the released models exactly; with the Metrica matches added, held-out Metrica matches changed by -0.002 and the Sportec matches by -0.007, so the released models were kept. The [technical report](docs/technical-report.pdf) shows each result as a chart.
+**Earlier checks on 17 November, before the larger models.** Further tests were run on external matches only, each against a gate written in advance. First, the ball was removed from held-out external matches as often as the supplied tracking loses it (12% of live frames in gaps with a 2.5 s median, 76% of dead frames). SpellF1 falls by 0.03 to 0.09, most when the loss falls on hand-overs, and neither a 2 s nor a 3 s minimum-control rule helps (best change +0.003 against a required +0.010). Second, heads fitted on all ten external matches gain 0.010 on the Sportec matches and lose 0.007 on the Metrica sample matches; the gate allowed a loss of 0.005, so they were not adopted. Third, heads fitted on clean plus ball-loss views gain 0.007 to 0.009 under random loss but lose 0.013 on clean Metrica tracking and 0.010 when the loss falls on hand-overs; not adopted. Fourth, the three dead-ball models were refitted with Metrica's sample matches added, taking dead ball where the provider's tracking has no ball. The refit on the four Sportec matches reproduced the released models exactly; with the Metrica matches added, held-out Metrica matches changed by -0.002 and the Sportec matches by -0.007, so the released models were kept. The [technical report](docs/technical-report.pdf) shows each result as a chart.
+
+**What the larger models change in the file.** Against the sixth edition the released file differs on 6,275 frames (4.0% of graded frames). All of them are home/away labels; dead-ball and unknown frames are identical, so the stoppages and the ball-exit onsets are unchanged. It holds 439 possessions (433 before) with a median of 4.68 s. Measured without any label of the supplied match.
 
 Smart Tagging and the second-camera tracking were analysed and not used for the file. Tagged set pieces already coincide with predicted restarts in 53 of 58 cases, and the broadcast ball fills only 5–9% of frames where the tactical ball is missing. The [technical report](docs/technical-report.pdf) lists every asset and idea that was tried and dropped, with the test and the result, and the history of the published editions.
 

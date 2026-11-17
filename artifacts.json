@@ -25,8 +25,8 @@
       "sha256": "05ff6b17d722b430816e8a82574df91f67ec78f1ce890e697c120cbfd9bfd8ef"
     },
     "README.md": {
-      "bytes": 18909,
-      "sha256": "e8026b164702d2e1c5f1b75a6a640533bc3036d518188b3b4713b6229e876bf7"
+      "bytes": 22648,
+      "sha256": "19b96d3594d6cb626501b41e7a8c9a14793326748fdea3f0e4ad7d48c61d57a8"
     },
     "adaptive_turnovers.py": {
       "bytes": 15459,
@@ -45,8 +45,8 @@
       "sha256": "9443a4cd23c6df1907cdfeac19c784e0a253bfffb95a6b55ecab9601505f3cf0"
     },
     "docs/MODEL_CARD.md": {
-      "bytes": 9124,
-      "sha256": "8ee51d60c262d980ffdd41b41bff78b04a27e220865470159113f08b3708a261"
+      "bytes": 9944,
+      "sha256": "89a4bd4ff793c9a1a5520ea3887ad8c4b870dc30d38df5eec21c097de42618bf"
     },
     "docs/figures/development-results.svg": {
       "bytes": 2129,
@@ -65,8 +65,8 @@
       "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
     },
     "docs/technical-report.pdf": {
-      "bytes": 571679,
-      "sha256": "06c81d5650657fc5aff2a730ce369cbe5043577ffa778a777ae00f327e2ca303"
+      "bytes": 578615,
+      "sha256": "bb144973fcf11cb9017e048869bd30250d82fb5f07302aea3f810ac19d1f336f"
     },
     "documented_structure.py": {
       "bytes": 1420,
@@ -102,15 +102,15 @@
     },
     "models/full330-boundary-training.json": {
       "bytes": 1665,
-      "sha256": "e08dbd0dfa31f7de24b9125c0c27c0109282d0b6a165a519a5c28a23ec96bc76"
+      "sha256": "1f3bc2d4f3fe83419aab7b1ef6e352f6bd75d69e11ac6c6b0424b0c8d77e2aaa"
     },
     "models/full330-boundary.joblib": {
-      "bytes": 546383,
-      "sha256": "76ac0297101b99a5b68e5fd770cc3649748e3f25536759b274316c96e9736aa0"
+      "bytes": 3147344,
+      "sha256": "0fb8829d143ca24c3c966787a8c387e2ad530eaed06a4b9139766c45defcccdc"
     },
     "models/owner-model.joblib": {
-      "bytes": 542222,
-      "sha256": "6f7ffc7dedcb281c96baea6440ef7f35a9dc5019a3f16286df53c700df0b4e10"
+      "bytes": 3143183,
+      "sha256": "aac55afe08ed8b720a35c26000cac8051048af42aad023f109f7ef50b1fda23e"
     },
     "models/quality-model.joblib": {
       "bytes": 29261,
@@ -126,7 +126,7 @@
     },
     "owner_model.py": {
       "bytes": 17055,
-      "sha256": "2a339c47dd9e06c1108118a674750090bbb546de60c0b7f141b1d035b7a32b9e"
+      "sha256": "d199c98dca60d1fc573332078592d906132d3b979937c2edc412ba2a7f37a2b8"
     },
     "requirements-lock.txt": {
       "bytes": 99,
@@ -196,7 +196,7 @@
   "expected_output": {
     "bytes": 1682773,
     "rows": 199319,
-    "sha256": "ee21ca36133fd199b8a9bc3322fabeeab4de7b8417e9b239ba1e29c7b9a68b63"
+    "sha256": "5771a8f50019c9505ad689cc427a8d1db5b07511ec2f6cf47c0eb630ba165717"
   },
   "fit_ids": [
     "J03WOH",
