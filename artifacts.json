@@ -25,8 +25,8 @@
       "sha256": "05ff6b17d722b430816e8a82574df91f67ec78f1ce890e697c120cbfd9bfd8ef"
     },
     "README.md": {
-      "bytes": 22648,
-      "sha256": "19b96d3594d6cb626501b41e7a8c9a14793326748fdea3f0e4ad7d48c61d57a8"
+      "bytes": 23975,
+      "sha256": "009e867226c30ca319e2c52e7013912e73fd43a923f522d8bad63939a7884c1c"
     },
     "adaptive_turnovers.py": {
       "bytes": 15459,
@@ -38,15 +38,15 @@
     },
     "candidate_pipeline.py": {
       "bytes": 6899,
-      "sha256": "9f31677bbec1023617af0e2ddc8c23d1f26ad9f41be1f1f49e04ec6680c4fa62"
+      "sha256": "f4b91ba3c9332348929fd6ddaea8baca08ec62715da44b9a734e637b13e7971e"
     },
     "constrained_turnovers.py": {
       "bytes": 16102,
-      "sha256": "9443a4cd23c6df1907cdfeac19c784e0a253bfffb95a6b55ecab9601505f3cf0"
+      "sha256": "b280adcfd5114cc6daca76ddd6814a4d1da53a5483f147225535fe41544298c7"
     },
     "docs/MODEL_CARD.md": {
-      "bytes": 9944,
-      "sha256": "89a4bd4ff793c9a1a5520ea3887ad8c4b870dc30d38df5eec21c097de42618bf"
+      "bytes": 10520,
+      "sha256": "09afdceed12c71fa3b9a84c0717a0deb632e27b14dd760901a6bec6f8b3cb6a7"
     },
     "docs/figures/development-results.svg": {
       "bytes": 2129,
@@ -65,8 +65,8 @@
       "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
     },
     "docs/technical-report.pdf": {
-      "bytes": 578615,
-      "sha256": "bb144973fcf11cb9017e048869bd30250d82fb5f07302aea3f810ac19d1f336f"
+      "bytes": 587853,
+      "sha256": "34fd0d95b6b5d200142059548c41069d9f9a2468cd1753d39163e69d5a576137"
     },
     "documented_structure.py": {
       "bytes": 1420,
@@ -125,8 +125,8 @@
       "sha256": "8696e58502e8f902bbae6a77d18e9bcdfb70050575b07047d8a1fc8788f3e962"
     },
     "owner_model.py": {
-      "bytes": 17055,
-      "sha256": "d199c98dca60d1fc573332078592d906132d3b979937c2edc412ba2a7f37a2b8"
+      "bytes": 17065,
+      "sha256": "6f0fb4819587e491c5048d99da73f2740e6c9de7b01b4eb80d9ccef7ec61959a"
     },
     "requirements-lock.txt": {
       "bytes": 99,
@@ -196,7 +196,7 @@
   "expected_output": {
     "bytes": 1682773,
     "rows": 199319,
-    "sha256": "5771a8f50019c9505ad689cc427a8d1db5b07511ec2f6cf47c0eb630ba165717"
+    "sha256": "60a794d19ff52e672f29525e8566c4292860a34d1692796f9277e7871b16fbfb"
   },
   "fit_ids": [
     "J03WOH",

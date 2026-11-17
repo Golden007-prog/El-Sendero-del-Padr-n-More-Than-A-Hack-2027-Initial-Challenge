@@ -9,7 +9,7 @@ from threadpoolctl import threadpool_limits
 
 
 TRAIN_IDS = ("J03WOH", "J03WMX", "J03WN1", "J03WOY")
-SWITCH_COSTS = (0.6, 1.2, 2.4)
+SWITCH_COSTS = (0.6, 0.9, 1.2, 2.4)
 WINDOW_SECONDS = (0.5, 2.0)
 THREAD_LIMIT = 4
 EVIDENCE_KEYS = (
@@ -325,7 +325,7 @@ def decode_owner(anchor_v4, probabilities, blocks, fps, switch_cost):
     except TypeError:
         valid = False
     if not valid:
-        raise ValueError("switch_cost must be one of the fixed values 0.6, 1.2, 2.4")
+        raise ValueError("switch_cost must be one of the fixed values 0.6, 0.9, 1.2, 2.4")
     anchor = np.asarray(anchor_v4)
     if anchor.ndim != 1 or not np.isin(anchor, list("HADX")).all():
         raise ValueError("anchor_v4 must be a one-dimensional H/A/D/X vector")

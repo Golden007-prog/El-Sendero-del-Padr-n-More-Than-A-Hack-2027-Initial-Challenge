@@ -1,4 +1,4 @@
-"""Self-contained frozen v4 -> owner(.6) -> constrained research pipeline."""
+"""Self-contained frozen v4 -> owner(.9) -> constrained research pipeline."""
 import hashlib
 import importlib.metadata
 import json
@@ -117,14 +117,14 @@ def infer(features, blocks, models, frozen_v4=None):
         raise ValueError("v4 anchor shape/alphabet mismatch")
     evidence = control_evidence(features, blocks)
     probabilities = predict_owner(models["owner"], features, evidence, blocks)
-    c0, owner_audit = decode_owner(anchor, probabilities, blocks, features.fps, .6)
+    c0, owner_audit = decode_owner(anchor, probabilities, blocks, features.fps, .9)
     scores = predict_boundary(models["boundary"], features, evidence, blocks)
     constrained, audit = refine(c0, probabilities, scores, blocks, features.fps)
     for output in (c0, constrained):
         if not np.array_equal(output == "D", anchor == "D") or not np.array_equal(output == "X", anchor == "X"):
             raise AssertionError("Candidate changed frozen v4 status")
     return {"anchor_v4": anchor, "baseline_c0": c0, "constrained": constrained}, {
-        "v4_recomputed": frozen_v4 is None, "owner_switch_cost": .6,
+        "v4_recomputed": frozen_v4 is None, "owner_switch_cost": .9,
         "owner_audit": owner_audit, "constrained_audit": audit,
         "training_or_selection_run": False, "promotion_to_submission": False}
 
