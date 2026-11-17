@@ -25,12 +25,16 @@
       "sha256": "05ff6b17d722b430816e8a82574df91f67ec78f1ce890e697c120cbfd9bfd8ef"
     },
     "README.md": {
-      "bytes": 14905,
-      "sha256": "5d84578c7591ccae76cf3d64b470f27cf6706a3653bba3a374ce4bc8ce19712f"
+      "bytes": 17739,
+      "sha256": "53137b45c2fc33bd287dd1c8426df8fb2107d1bd85b936eb73222543098e4492"
     },
     "adaptive_turnovers.py": {
       "bytes": 15459,
       "sha256": "4be186601e60ea417d1ac31371c9b93b0b3a7031266d9901ffe49a8e69a39ddd"
+    },
+    "ball_exit.py": {
+      "bytes": 3263,
+      "sha256": "ad58870c01cdf00248ed91277415963284b9321ff9310c409d862a78981b3801"
     },
     "candidate_pipeline.py": {
       "bytes": 6899,
@@ -41,8 +45,8 @@
       "sha256": "9443a4cd23c6df1907cdfeac19c784e0a253bfffb95a6b55ecab9601505f3cf0"
     },
     "docs/MODEL_CARD.md": {
-      "bytes": 8228,
-      "sha256": "a94a2e07729a6e2ad34ad92037f06060caac765a10f58072b31235e7924ab843"
+      "bytes": 9124,
+      "sha256": "8ee51d60c262d980ffdd41b41bff78b04a27e220865470159113f08b3708a261"
     },
     "docs/figures/development-results.svg": {
       "bytes": 2129,
@@ -61,8 +65,8 @@
       "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
     },
     "docs/technical-report.pdf": {
-      "bytes": 555343,
-      "sha256": "743c860687213ed846d07cc55d3f2b9c98923839ab3303494d857f0eff53b3eb"
+      "bytes": 571237,
+      "sha256": "15188681a3ca09966ac96f75f13c0a637e5eea41d661e421263bd86f0633095f"
     },
     "documented_structure.py": {
       "bytes": 1420,
@@ -85,8 +89,8 @@
       "sha256": "473bf0502a28d93ff49fe5c20be4e546e30a9d8fa4112ab50b1ecdaf44233064"
     },
     "infer_candidate.py": {
-      "bytes": 3718,
-      "sha256": "ba7d44b5b7a894af5076ddeb2930ce71f1d99d0317c17180c0fca386750b6b7a"
+      "bytes": 3879,
+      "sha256": "488fcaa60020c8fdedb2d36861d5f82f20af2b9717e69e0f56ce5a1c8eae18f7"
     },
     "licenses/METRICA_LICENSE": {
       "bytes": 1637,
@@ -192,7 +196,7 @@
   "expected_output": {
     "bytes": 1682773,
     "rows": 199319,
-    "sha256": "cd2529c42a804d60d43d8777babaaebf580926f14e67e646487669d6edf464d3"
+    "sha256": "ee21ca36133fd199b8a9bc3322fabeeab4de7b8417e9b239ba1e29c7b9a68b63"
   },
   "fit_ids": [
     "J03WOH",

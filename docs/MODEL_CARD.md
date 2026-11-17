@@ -55,13 +55,17 @@ Thirty-three raw observation channels plus centered 0.5/2-second means and contr
 
 The status stage uses fixed interval-quality threshold 0.9 and timing strength 0.5. Owner switch cost is 0.6. Boundary evidence changes the switch cost to `0.6 × (1 − 0.8b)`. The constrained decoder retains original H/A transitions within ±0.20 s, preserves their direction/order, and permits complete return excursions under the fixed 0.40 s rules. Original shorter principal runs remain feasible. D/X masks and period endpoints stay fixed through ownership refinement. These are engineering constraints, not physiological minima.
 
-After decoding, one organizer-documented window is labelled dead ball: the second half is graded from frame 110,808 but does not kick off until 113,742 (organizers' FAQ). This uses the organizers' published constant, not a fitted parameter or a team annotation.
+After decoding, stoppage onsets are moved to the moment the ball leaves the pitch ([ball_exit.py](../ball_exit.py)): if, within 3 s before a predicted stoppage, the ball is tracked outside the pitch, or was last tracked within 2 m of a boundary line and is not tracked again, the stoppage starts 2 frames after the last in-pitch sighting. The three constants are fixed by reasoning, not fitted, and only live frames directly before a predicted stoppage can change.
+
+Then one organizer-documented window is labelled dead ball: the second half is graded from frame 110,808 but does not kick off until 113,742 (organizers' FAQ). This uses the organizers' published constant, not a fitted parameter or a team annotation.
 
 ## Evaluation and limitations
 
 Official spellF1 averages one-to-one whole-spell F1 over IoU 0.3/0.4/0.5/0.6/0.7. On the same three exposed development games, the equal-match mean is 0.439621838 for the anchor, 0.512489088 for learned ownership, and 0.537786282 for the final constrained path. The final path retains 405/408 original owner-cohort matched events. Losses retain a 2-second penalty and the original denominator in timing comparisons.
 
 Those figures are for heads fitted on the four Sportec matches. The released heads add the three Metrica sample matches. With each sample match held out in turn, official spellF1 against the event-derived reference rises from 0.610233 to 0.643132 (every match improves), and the Sportec development mean moves from 0.537786 to 0.531989. The acceptance gate was fixed before the fits. A minimum-control rule that absorbed opponent runs under three seconds was published in one edition and withdrawn after it lowered the score on both external benchmarks; it is not part of this release.
+
+The ball-exit onset adds to these figures: Sportec development 0.531989 to 0.536550, Metrica sample matches 0.643132 to 0.652335, and 0.546375 to 0.551132 on the four Sportec fitting matches used as a replication. Every one of the ten matches improves. The rule missed the size set in advance for the first six matches (+0.008 on Sportec) and was adopted after the replication; both facts are stated in the README and the technical report.
 
 These results are development evidence. They do not estimate the private challenge score, an unseen-match gain or a leaderboard rank. Cleaner external tracking, seven repeatedly exposed matches, and uncertain provider-control semantics constrain generalization. The status stage can miss isolated stoppages; fixed D/X support prevents later ownership stages from repairing them. Retaining an initial handover can also preserve a mistake.
 

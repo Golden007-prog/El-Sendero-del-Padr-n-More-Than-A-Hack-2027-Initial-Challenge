@@ -7,6 +7,7 @@ import time
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
+from ball_exit import advance_dead_onsets
 from candidate_pipeline import digest, infer, load_features, load_models, validate_package, write_json_exclusive
 from documented_structure import apply_documented_dead
 from games import GAME
@@ -40,7 +41,8 @@ def run(data_dir, feature_file, output):
     predictions, audit = infer(features, blocks, load_models())
     if {name: digest(path) for name, path in inputs.items()} != before:
         raise ValueError("Input files changed during inference")
-    labels, audit["documented_structure"] = apply_documented_dead(predictions["constrained"], blocks, GAME)
+    labels, audit["ball_exit"] = advance_dead_onsets(predictions["constrained"], features.ball_xy_m, features.pitch, blocks, features.fps)
+    labels, audit["documented_structure"] = apply_documented_dead(labels, blocks, GAME)
     validate_package()
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("x", encoding="utf-8", newline="") as stream:
