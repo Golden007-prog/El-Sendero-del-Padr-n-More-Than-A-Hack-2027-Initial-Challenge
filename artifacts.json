@@ -25,8 +25,8 @@
       "sha256": "05ff6b17d722b430816e8a82574df91f67ec78f1ce890e697c120cbfd9bfd8ef"
     },
     "README.md": {
-      "bytes": 29266,
-      "sha256": "cb19538a4b715335664aa39028e9c41ab3568890268d04360ab001b830f1e851"
+      "bytes": 31563,
+      "sha256": "b7dd980d764a6921f980beceac40a2b01350eea172467e07d893bba977ae262a"
     },
     "adaptive_turnovers.py": {
       "bytes": 15459,
@@ -45,8 +45,8 @@
       "sha256": "b280adcfd5114cc6daca76ddd6814a4d1da53a5483f147225535fe41544298c7"
     },
     "docs/MODEL_CARD.md": {
-      "bytes": 12088,
-      "sha256": "d01691fcfa967b280b48ce153e9af29ea4b303539f6f066b7b8c7ddc6491f276"
+      "bytes": 12455,
+      "sha256": "7ed30cf2d21fdedfac145ad82ce7887437515d27e0db74e0d9196db7336fa4f7"
     },
     "docs/figures/development-results.svg": {
       "bytes": 2129,
@@ -65,8 +65,8 @@
       "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
     },
     "docs/technical-report.pdf": {
-      "bytes": 575731,
-      "sha256": "f0e3db196a626037f09841cffbc884006d608d264a4bbd47446218beb2d23c6c"
+      "bytes": 608563,
+      "sha256": "72a6c3af561bc96a54086a8ee0f2ee467cb07b3ddeb9701bb02e5e9689c02633"
     },
     "documented_structure.py": {
       "bytes": 1420,
