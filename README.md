@@ -24,13 +24,13 @@ The football distinction matters: a pass, loose ball, deflection or contested to
 <img src="docs/figures/pipeline.svg" alt="Four stages: live/dead support, learned ownership, turnover evidence, and a constrained possession path." width="1200">
 
 1. **Establish live/dead support.** Player motion and geometric control evidence form a status timeline. Learned timing and interval-quality models refine its stoppages.
-2. **Estimate team ownership.** A 330-feature model combines ball proximity, control evidence, temporal summaries, motion, visibility and missingness. A sequence decoder produces an initial H/A path with switch cost `0.9`.
+2. **Estimate team ownership.** A 330-feature model combines ball proximity, control evidence, temporal summaries, motion, visibility and missingness. A sequence decoder produces an initial H/A path with switch cost `0.9`. Two versions of this model and of the turnover model are bundled, one fitted on ball tracks as recorded and one fitted with smoothed tracks added; the pipeline measures how smooth the ball track is and uses the matching pair (see [Ball smoothing](#ball-smoothing)).
 3. **Estimate turnover evidence.** A separate model scores incoming H/A boundaries. Strong boundary evidence lowers the cost of a switch.
 4. **Constrain the final path.** The decoder preserves the order and direction of initial handovers within ±`0.20 s` windows. Additional handovers must form complete return excursions under fixed `0.40 s` duration rules. Dead-ball and unknown support remain unchanged.
 5. **Start a stoppage when the ball leaves the pitch.** Player movement reacts late to a stoppage. If, within 3 s before a predicted stoppage, the ball is tracked outside the pitch, or was last tracked within 2 m of a boundary line and is not tracked again, the stoppage starts 2 frames after the last in-pitch sighting. Nothing is fitted, and only live frames directly before a predicted stoppage can change.
 6. **Apply one documented dead-ball window.** The organizers' [FAQ](https://github.com/metrica-sports/more-than-a-hack-2027/blob/main/FAQ.md) states that the second half is graded from frame `110,808` but does not kick off until `113,742`, and that those graded frames are dead ball. The final file labels that window `D`. The constant is the organizers' published one; no frame was inspected or labelled by the team.
 
-This composition couples learned local evidence with explicit temporal structure. The constraints limit arbitrary edits and make the final path traceable; they do not guarantee that an initial predicted handover is correct. All parameters and five fitted models are fixed during inference. The method is offline and may use future observations.
+This composition couples learned local evidence with explicit temporal structure. The constraints limit arbitrary edits and make the final path traceable; they do not guarantee that an initial predicted handover is correct. All parameters and seven fitted models are fixed during inference. The method is offline and may use future observations.
 
 <img src="docs/figures/possession-semantics.svg" alt="Invented illustration: home possession continues through a pass and loose ball until away control, followed by a dead-ball stoppage." width="1200">
 
@@ -45,7 +45,7 @@ The official scorer matches maximal H/A spells one-to-one by temporal overlap an
 
 ## Reproduce the possession file
 
-Use **64-bit CPython 3.11.9** and the pinned dependencies. The checked environment is Windows; a second machine and other operating systems have not been validated. No GPU, external service or training dataset is required for inference.
+Use **64-bit CPython 3.11.9** and the pinned dependencies. Checked on Windows and, in a container, on Linux; macOS and a second machine have not been validated. No GPU, external service or training dataset is required for inference.
 
 Clone this repository, then run the following from its root in PowerShell:
 
@@ -70,7 +70,7 @@ python3.11 -m venv .venv
 .venv/bin/python -I -B evaluation/validate_submission.py "outputs/El Sendero del Padrón.csv"
 ```
 
-The interpreter must be CPython 3.11.9 exactly; the package refuses to run otherwise. We have not run these commands on Linux or macOS ourselves. What we did check is that the output does not depend on the processor's instruction set or on the linear-algebra kernel: on the test machine the file is byte-identical with NumPy's optional CPU features disabled, with a generic BLAS kernel, single-threaded, and with all three together.
+The interpreter must be CPython 3.11.9 exactly; the package refuses to run otherwise. On Linux we ran them in the official `python:3.11.9-slim` container with a fresh installation of the pinned packages: the file is byte-identical. We have not run them on macOS. The output also does not depend on the processor's instruction set or on the linear-algebra kernel: on the test machine the file is byte-identical with NumPy's optional CPU features disabled, with a generic BLAS kernel, single-threaded, and with all three together.
 
 The organizer-provided bundle must have this layout; [DATA.md](DATA.md) explains authorized access and local placement:
 
@@ -92,9 +92,9 @@ The retained output is identified by:
 | Frames | **0–199318**, once each, in order |
 | Labels | **H / A / D / X** |
 | File size | **1,682,773 bytes** |
-| SHA-256 | `60a794d19ff52e672f29525e8566c4292860a34d1692796f9277e7871b16fbfb` |
+| SHA-256 | `14e2a7689db95d79fc2c2ab26e871064dd77e1d8e5ab337caa6b969dfa34d2fb` |
 
-Eight runs from raw inputs regenerated these identical bytes on the checked host: three plain runs and five in a test that varies the processor and math-library settings (default, single thread, NumPy's optional CPU features disabled, a generic BLAS kernel, and the last three together). A run takes between half a minute and a minute and a half depending on the laptop's state; the bytes do not change. A clean installation of all 12 pinned distributions passed for the first edition, and no dependency has changed since. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
+Eight runs from raw inputs regenerated these identical bytes: two plain runs on the checked host, five more there in a test that varies the processor and math-library settings (default, single thread, NumPy's optional CPU features disabled, a generic BLAS kernel, and the last three together), and one in a Linux container. A run takes between half a minute and a minute and a half depending on the laptop's state; the bytes do not change. A clean installation of all 12 pinned distributions passed on Windows for the first edition and in the Linux container for this one; no dependency has changed. These checks establish reproducibility and output format; they do not establish accuracy against the private challenge labels.
 
 ## Measured evidence
 
@@ -132,7 +132,7 @@ The status models decide stoppages from player movement, which reacts late. On h
 | Metrica sample matches, each held out | 0.643132 | 0.652335 |
 | Sportec J03WOH, J03WMX, J03WN1, J03WOY (replication on the status models' fitting matches) | 0.546375 | 0.551132 |
 
-SpellF1 and macroF1 rise on all ten matches, and spellF1 rises in all 40 further runs with simulated ball loss. With the rule the median onset error is between -3 and +5 frames on every held-out match. **The rule did not reach the size we had set in advance** for the first six matches (+0.008 on the Sportec matches; it gave +0.005), so by that gate alone it would not have been adopted. Because it had improved every run, we repeated it unchanged on four further matches with the criterion, written first, that every match must improve; it did. We report both facts. With the models and the switching cost of this release the rule adds 0.004 on the Sportec held-out matches (0.561559 to 0.565928) and 0.010 on the Metrica ones (0.691677 to 0.701647).
+SpellF1 and macroF1 rise on all ten matches, and spellF1 rises in all 40 further runs with simulated ball loss. With the rule the median onset error is between -3 and +5 frames on every held-out match. **The rule did not reach the size we had set in advance** for the first six matches (+0.008 on the Sportec matches; it gave +0.005), so by that gate alone it would not have been adopted. Because it had improved every run, we repeated it unchanged on four further matches with the criterion, written first, that every match must improve; it did. We report both facts. With the models and the switching cost of this release, on ball tracks as recorded, the rule adds 0.004 on the Sportec held-out matches (0.561559 to 0.565928) and 0.010 on the Metrica ones (0.691677 to 0.701647).
 
 On the supplied match the rule moves 28 stoppage onsets earlier by a median 19 frames (644 frames, 0.4% of graded frames; only live frames become dead ball). The exits lie on all four boundary lines, and the first outside sighting is at most 0.4 m beyond the line in 90% of cases, so they are line crossings and not high balls projected past the far touchline. This was measured without any label of the supplied match.
 
@@ -147,7 +147,7 @@ The two models that decide which team has the ball were small (160 boosting iter
 | 160 iterations, 15 leaves (sixth edition) | 0.536550 | 0.652335 | 0.611160 |
 | 400 iterations, 31 leaves | 0.552509 | 0.669715 | 0.629017 |
 | 800 iterations, 31 leaves (eighth edition) | 0.557311 | 0.682533 | 0.638169 |
-| **800 iterations, 31 leaves, switching cost 0.9 (this release)** | **0.565928** | **0.701647** | **0.652915** |
+| **800 iterations, 31 leaves, switching cost 0.9 (ninth edition; this release on tracks as recorded)** | **0.565928** | **0.701647** | **0.652915** |
 
 "Provider dead ball" takes dead ball where Metrica's sample tracking has no ball and the owner from the events; it is the stricter of the two Metrica references.
 
@@ -157,23 +157,46 @@ The first step raised all six held-out matches (nested estimate +0.013). The sec
 
 **The dead-ball models were tested at the larger size and kept as they are.** Status and timing models with 400 iterations and 31 leaves gain 0.009 on the Sportec matches and lose 0.002 on the Metrica ones; the gate failed.
 
+### Ball smoothing
+
+The supplied tracking differs from every training match in one respect the models had not been fitted for: its ball track is smoothed over about half a second. Measured without labels, on the tracked frames our own pipeline calls live, the ball's velocity changes by more than 6.4 m/s between two consecutive windows of 0.2 s in only 1% of frames, against 19 to 21 m/s in live play of the training matches; at one second the two agree. The filter is symmetric in time, so the ball does not lag behind the play.
+
+Smoothing the ball of the external matches the same way (a Gaussian of 6 frames, the width that best reproduces the supplied statistics) lowers the ninth edition's held-out spellF1 by 0.050 on the Sportec matches and 0.067 on the Metrica ones; all six matches fall. It is the largest single effect we measured. Most of it cannot be recovered by any model, because the timing detail is no longer in the track.
+
+| Held-out matches | Sportec | Metrica, event reference | Metrica, provider dead ball |
+|---|---:|---:|---:|
+| Ball track as recorded (ninth edition and this release) | 0.565928 | 0.701647 | 0.652915 |
+| Ball smoothed at 6 frames, ninth-edition models | 0.515816 | 0.622802 | 0.585668 |
+| **Ball smoothed at 6 frames, this release** | **0.517683** | **0.634835** | **0.594819** |
+| Ball smoothed at 6 frames and lost as in the supplied match, this release | 0.484764 | 0.587300 | 0.549280 |
+
+This release bundles a second pair of ownership and boundary models, fitted with every training match added once more with its ball track smoothed at 6 frames. The pipeline measures the track it is given (the 99th percentile of the change in ball velocity over 0.2 s) and uses the second pair when that value is below 12 m/s. The ten external matches give 16.6 to 20.5 as recorded and 5.1 to 10.3 once smoothed at 4, 6 or 8 frames; the supplied match gives 7.4. At 3 frames the external matches straddle the threshold (10.8 to 12.5), so a track smoothed that lightly could be read either way. On tracks as recorded the output is exactly the ninth edition's.
+
+**What was written in advance and what was added afterwards.** Three versions were fitted (smoothed tracks only; recorded plus smoothed; three widths) and judged by the nested scheme on smoothed held-out matches. The version above was chosen on every fold and passed its gate (+0.009 against +0.008), the ball-loss guard and the guard at a width of 8 frames (+0.011 and +0.028). It failed the guard for tracks as recorded: there it is 0.009 and 0.011 below the ninth-edition models, against a limit of 0.010. We did not waive that guard; we made the pipeline choose its models from the track instead. That switch was designed after the result was known. With the ball smoothed the gain is small at 6 frames (+0.002 Sportec, +0.009 Metrica) and larger if the supplied filter is slightly wider, as the width of its acceleration peaks suggests. The switching cost and the ball-exit rule were re-checked with a smoothed ball and hold (0.9 against 0.6: +0.004 and +0.017; the rule adds 0.004 and 0.007).
+
+A further version, fitted in addition with the ball lost as it is in the supplied match, was tested against this pair on held-out matches with the ball smoothed and lost: +0.009 (Sportec) and +0.007 (Metrica), nested estimate +0.007 against a gate of +0.008. It was not adopted.
+
+The smoothing width and the threshold come from statistics of the supplied tracking and of the external matches that need no label, and both were set knowing the supplied match's values. No label of the supplied match was read for any of this.
+
 ### Checks on the supplied match
 
-No model was trained or fitted on the supplied match, and no label of it was used to choose anything in the released file.
+No model was trained or fitted on the supplied match, and no label of it was used to choose anything in the released file. One training setting, the smoothing applied to the ball track of the external matches, is matched to statistics of the supplied tracking that are measured without labels.
 
-**What the evaluation rewards.** The ranking metric counts each possession once, however long. The organizers publish that a perfect file delivered one second late scores only 0.654, which is possible only if many reference possessions last just a few seconds. Scoring labels against a one-second-late copy of themselves gives 0.557 for the Sportec provider field, 0.627 and 0.679 for possession derived from Metrica's sample events, and 0.748 once opponent runs under three seconds are removed. The released file gives 0.692 (0.641 before the switching cost was raised). No parameter was fitted to these figures; they were used to decide whether brief possessions belong in the file. The switching cost was chosen on external matches, not from this figure; we note that at 0.9 the file sits further above the published 0.654 than it did at 0.6.
+**What the evaluation rewards.** The ranking metric counts each possession once, however long. The organizers publish that a perfect file delivered one second late scores only 0.654, which is possible only if many reference possessions last just a few seconds. Scoring labels against a one-second-late copy of themselves gives 0.557 for the Sportec provider field, 0.627 and 0.679 for possession derived from Metrica's sample events, and 0.748 once opponent runs under three seconds are removed. The released file gives 0.685 (0.641 before the switching cost was raised). No parameter was fitted to these figures; they were used to decide whether brief possessions belong in the file. The switching cost was chosen on external matches, not from this figure; we note that at 0.9 the file sits further above the published 0.654 than it did at 0.6.
 
 **One pipeline check, and a rule that was withdrawn.** The official evaluator was run once on the public five-minute window, on the second edition, to confirm frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late, spellF1 `0.4182` on 17 possessions with 27 predicted. Seventeen possessions cannot rank methods. Because that reading showed more predicted possessions than reference ones, a rule absorbing opponent runs under three seconds was added and published as a third edition. Two external benchmarks then showed it removes real possessions (Sportec development 0.538 without the rule, 0.475 with it; Metrica sample matches 0.610 without, 0.560 with), and the delay figures above say the same. The rule was withdrawn and is not in this release. The released file was not scored on the public window.
 
 **Earlier checks on 17 November, before the larger models.** Further tests were run on external matches only, each against a gate written in advance. First, the ball was removed from held-out external matches as often as the supplied tracking loses it (12% of live frames in gaps with a 2.5 s median, 76% of dead frames). SpellF1 falls by 0.03 to 0.09, most when the loss falls on hand-overs, and neither a 2 s nor a 3 s minimum-control rule helps (best change +0.003 against a required +0.010). Second, heads fitted on all ten external matches gain 0.010 on the Sportec matches and lose 0.007 on the Metrica sample matches; the gate allowed a loss of 0.005, so they were not adopted. Third, heads fitted on clean plus ball-loss views gain 0.007 to 0.009 under random loss but lose 0.013 on clean Metrica tracking and 0.010 when the loss falls on hand-overs; not adopted. Fourth, the three dead-ball models were refitted with Metrica's sample matches added, taking dead ball where the provider's tracking has no ball. The refit on the four Sportec matches reproduced the released models exactly; with the Metrica matches added, held-out Metrica matches changed by -0.002 and the Sportec matches by -0.007, so the released models were kept. The [technical report](docs/technical-report.pdf) shows each result as a chart.
 
-**What the larger models and the switching cost change in the file.** Against the sixth edition the released file differs on 6,616 frames (4.2% of graded frames), against the eighth on 1,489. All of them are home/away labels; dead-ball and unknown frames are identical, so the stoppages and the ball-exit onsets are unchanged. It holds 397 possessions (433 in the sixth edition, 439 in the eighth) with a median of 5.04 s. Measured without any label of the supplied match.
+**What the later editions change in the file.** Against the sixth edition the released file differs on 7,790 frames (4.9% of graded frames), against the ninth on 4,352. All of them are home/away labels; dead-ball and unknown frames are identical, so the stoppages and the ball-exit onsets are unchanged. It holds 400 possessions (433 in the sixth edition, 439 in the eighth, 397 in the ninth) with a median of 5.56 s. The pipeline measured a ball-track value of 7.4 m/s and used the models fitted with smoothed tracks. Measured without any label of the supplied match.
+
+**The audio track and the long ball gaps (not used).** The tactical video carries audio, and the referee's whistle can be told from the crowd's: in the first half, loud pure tones at 3.6 to 4.4 kHz are 10 to 26 times more frequent in the 2 s before our predicted stoppages than elsewhere in live play, while the crowd whistles near 3 kHz. A detector fixed on the first half (a whistle before 9 of 45 stoppages) was not confirmed on the second (4 of 53, 2.5 times chance against a required 3), so the audio is not used. Separately, the ball is lost for 4 s or longer (median 6.8 s) in 27 stretches that we label live play. These are not missed stoppages: players move at 2.3 m/s in them, as in live play (2.0) and not as in stoppages (1.0), and the ball returns at a median 17 m/s. Both were measured without labels.
 
 Smart Tagging and the second-camera tracking were analysed and not used for the file. Tagged set pieces already coincide with predicted restarts in 53 of 58 cases, and the broadcast ball fills only 5–9% of frames where the tactical ball is missing. The [technical report](docs/technical-report.pdf) lists every asset and idea that was tried and dropped, with the test and the result, and the history of the published editions.
 
 ## Models and external data
 
-Five bundled models cover **status**, **timing**, **interval quality**, **ownership** and **turnover boundaries**. Status, timing and interval quality are fitted on four external Sportec Open DFL matches: J03WOH, J03WMX, J03WN1 and J03WOY. Ownership and turnover boundaries are fitted on those four plus Metrica Sports' three public sample matches. Supplied challenge possession labels and video are not training inputs.
+Seven bundled models cover **status**, **timing**, **interval quality**, and two pairs of **ownership** and **turnover-boundary** models: one pair for ball tracks as recorded, one for smoothed tracks. Status, timing and interval quality are fitted on four external Sportec Open DFL matches: J03WOH, J03WMX, J03WN1 and J03WOY. Ownership and turnover boundaries are fitted on those four plus Metrica Sports' three public sample matches. Supplied challenge possession labels and video are not training inputs.
 
 The Metrica sample matches come from [metrica-sports/sample-data](https://github.com/metrica-sports/sample-data); we acknowledge Metrica Sports as their source. File identities are in [metrica-sample-assets.json](metrica-sample-assets.json). Their targets are derived from Metrica's human-coded event data by a fixed rule implemented in [training/fit_heads_seven_matches.py](training/fit_heads_seven_matches.py): possession changes only at a RECOVERY or SET PIECE of the other team, and the ball is dead from the end of the event before each set piece to that set piece. The events are Metrica's; the frame-level derivation is ours. The data is not redistributed here.
 
@@ -194,7 +217,7 @@ documented_structure.py      Organizer-documented second-half kick-off window
 training/                   Script that fitted the ownership and boundary heads
 metrica-sample-assets.json  Identities of the Metrica sample files used for training
 research_possession/         Tracking, status and timing components
-models/                     Five fitted artifacts and boundary provenance
+models/                     Seven fitted artifacts and boundary provenance
 evaluation/                 Official metrics and CSV validator
 docs/                       Technical report, model card and figures
 artifacts.json              Package source/model integrity manifest

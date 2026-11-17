@@ -4,17 +4,17 @@ TRACE estimates frame-level team possession from automatic tactical tracking. Th
 
 ## Intended use and boundaries
 
-The supplied entry point reproduces the possession file for the organizer-defined match and frame/period layout. It uses automatic tactical tracking TXT and matching XML metadata. Video, Smart Tagging, homography, corrected tracking and possession references are not inference inputs. Five fitted models and their supporting code are bundled.
+The supplied entry point reproduces the possession file for the organizer-defined match and frame/period layout. It uses automatic tactical tracking TXT and matching XML metadata. Video, Smart Tagging, homography, corrected tracking and possession references are not inference inputs. Seven fitted models and their supporting code are bundled.
 
 This is offline sequence inference: centered temporal features may use later observations. It is not a real-time event detector or a certification of physical ball control. Missing balls, tracking errors, crowded play, stoppages and provider-definition differences can affect performance.
 
 ## External source and split
 
-All five components use **Sportec Open DFL**, dataset version 1, [DOI 10.6084/m9.figshare.28196177.v1](https://doi.org/10.6084/m9.figshare.28196177.v1), described by Bassek, Rein, Weber and Memmert (2025), [DOI 10.1038/s41597-025-04505-y](https://doi.org/10.1038/s41597-025-04505-y). The saved release identifies official DFL/Sportec data and TRACAB optical tracking. Its data licence is [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+All fitted components use **Sportec Open DFL**, dataset version 1, [DOI 10.6084/m9.figshare.28196177.v1](https://doi.org/10.6084/m9.figshare.28196177.v1), described by Bassek, Rein, Weber and Memmert (2025), [DOI 10.1038/s41597-025-04505-y](https://doi.org/10.1038/s41597-025-04505-y). The saved release identifies official DFL/Sportec data and TRACAB optical tracking. Its data licence is [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 | Role | Match identities | Use |
 |---|---|---|
-| Training | J03WOH, J03WMX, J03WN1, J03WOY | All five fitted components |
+| Training | J03WOH, J03WMX, J03WN1, J03WOY | All fitted components |
 | Training | Metrica Sports Sample Games 1, 2, 3 | Ownership and boundary heads only |
 | Development | J03WPY, J03WQQ, J03WR9 | Repeated selection and evaluation |
 
@@ -48,10 +48,14 @@ Target attributes are excluded from predictor features. Predictors use observati
 | `models/quality-model.joblib` | Derived interval quality using leave-one-match-out status predictions |
 | `models/owner-model.joblib` | Known H/A ownership; D/X excluded |
 | `models/full330-boundary.joblib` | Direct known H↔A changes with ±0.20 s target radius; D/X gaps excluded |
+| `models/owner-model-smoothed.joblib` | As `owner-model.joblib`, fitted with smoothed ball tracks added; used when the ball track is smoothed |
+| `models/full330-boundary-smoothed.joblib` | As `full330-boundary.joblib`, fitted with smoothed ball tracks added; used when the ball track is smoothed |
 
 The owner and boundary heads use histogram gradient boosting: 800 iterations, learning rate 0.07, at most 31 leaves, minimum 60 samples per leaf, L2 regularization 2, seed 2027, and no early stopping. They use 5 Hz training sampling, match/class balancing and team-swap augmentation. Their scores are not calibrated probabilities.
 
-Thirty-three raw observation channels plus centered 0.5/2-second means and contrasts, with missingness indicators, produce 330 features. The ownership and boundary heads each use **120,438 original sampled rows** (60,389 from the Sportec matches and 60,049 from the Metrica sample matches), doubled to 240,876 by team-swap augmentation. Its detailed aggregate settings and counts are in [full330-boundary-training.json](../models/full330-boundary-training.json).
+Thirty-three raw observation channels plus centered 0.5/2-second means and contrasts, with missingness indicators, produce 330 features. The ownership and boundary heads each use **120,438 original sampled rows** (60,389 from the Sportec matches and 60,049 from the Metrica sample matches), doubled to 240,876 by team-swap augmentation. Its detailed aggregate settings and counts are in [full330-boundary-training.json](../models/full330-boundary-training.json) and, for the second pair, [full330-boundary-smoothed-training.json](../models/full330-boundary-smoothed-training.json).
+
+The supplied tracking carries a ball track smoothed over about half a second; the training matches do not. A second pair of heads (`owner-model-smoothed.joblib`, `full330-boundary-smoothed.joblib`) is fitted with every training match added once more, its ball track smoothed with a Gaussian of 6 frames (240,876 original sampled rows, 481,752 after team-swap augmentation). At inference the pipeline computes the 99th percentile of the change in ball velocity over 0.2 s and uses the second pair when it is below 12 m/s; external matches give 16.6 to 20.5 as recorded, the supplied match 7.4. With the ball smoothed at 6 frames the second pair changes held-out spellF1 by +0.002 (Sportec) and +0.009 (Metrica, provider dead ball) against the first pair; on tracks as recorded it would lose 0.009 and 0.011, which is why it is not used there. The switch was designed after those results; the README says what was registered in advance. The smoothing width and the threshold were set from statistics of the supplied tracking that need no label. The smoothing itself costs 0.050 and 0.067 and is mostly not recoverable.
 
 The status stage uses fixed interval-quality threshold 0.9 and timing strength 0.5. Owner switch cost is 0.9. Boundary evidence changes the switch cost to `0.9 × (1 − 0.8b)`. The constrained decoder retains original H/A transitions within ±0.20 s, preserves their direction/order, and permits complete return excursions under the fixed 0.40 s rules. Original shorter principal runs remain feasible. D/X masks and period endpoints stay fixed through ownership refinement. These are engineering constraints, not physiological minima.
 
@@ -73,4 +77,4 @@ The released switching cost is 0.9 (0.6 in earlier editions). It was chosen by t
 
 These results are development evidence. They do not estimate the private challenge score, an unseen-match gain or a leaderboard rank. Cleaner external tracking, seven repeatedly exposed matches, and uncertain provider-control semantics constrain generalization. The status stage can miss isolated stoppages; fixed D/X support prevents later ownership stages from repairing them. Retaining an initial handover can also preserve a mistake.
 
-Two raw-input runs reproduced the exact 199,319-row CSV, and a clean pinned installation passed on Windows/Python 3.11.9. Other hosts and operating systems remain unverified. Runtime/model identities are checked through [artifacts.json](../artifacts.json); the expected output hash is recorded in the [README](../README.md#reproduce-the-possession-file).
+Raw-input runs reproduce the exact 199,319-row CSV on Windows and in a Linux container (official Python 3.11.9 image, fresh installation of the pinned packages). macOS and a second machine remain unverified. Runtime/model identities are checked through [artifacts.json](../artifacts.json); the expected output hash is recorded in the [README](../README.md#reproduce-the-possession-file).

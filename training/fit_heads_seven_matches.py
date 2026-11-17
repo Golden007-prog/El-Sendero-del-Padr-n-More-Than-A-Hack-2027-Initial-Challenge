@@ -14,16 +14,28 @@ Training matches (none is distributed in this repository):
                      SET PIECE of the other team, and the ball is dead from the end
                      of the event before each SET PIECE to that set piece.
 
+The supplied automatic tracking carries a ball track that is smoothed over about half
+a second; the tracks of these seven matches are not. A second pair of heads is therefore
+fitted with ball tracks smoothed the same way added (a zero-phase Gaussian inside each
+stretch where the ball is tracked). Player positions are not touched; distances from the
+ball to the nearest player of each team are recomputed from the raw positions.
+
 Status, timing and interval-quality models are not refitted here.
 
-    python -I -B training/fit_heads_seven_matches.py --sportec DIR --metrica DIR --out DIR
+    python -I -B training/fit_heads_seven_matches.py --sportec DIR --metrica DIR --out DIR [--ball-smoothing 0,6]
 
-  --sportec  one <match>.npz per Sportec match with the predictor fields ball_xy_m,
-             nearest_m, player_speed_mps, player_count, player_summary, fps, pitch,
-             plus `labels` (H/A/D/X per frame) and `blocks` (period frame ranges)
+Two pairs of heads are bundled. Without --ball-smoothing the script writes the pair for tracks as
+recorded (owner-model.joblib, full330-boundary.joblib). With --ball-smoothing 0,6 it writes the pair
+used when the ball track is smoothed (owner-model-smoothed.joblib, full330-boundary-smoothed.joblib):
+each match contributes its recorded track and the same track smoothed at 6 frames, half weight each.
+
+  --sportec  one folder per Sportec match (J03WOH, J03WMX, J03WN1, J03WOY) holding the
+             original DFL files: the raw observed positions and the match information
+             (DFL_04_03_positions_raw_observed_*.xml and DFL_02_01_matchinformation_*.xml,
+             or the same files named tracking.xml and matchinformation.xml)
   --metrica  folder holding the sample tracking and event files under their
              original names
-  --out      new folder for owner-model.joblib, full330-boundary.joblib and a summary
+  --out      new folder for the two model files and a summary
 """
 import argparse
 import hashlib
@@ -35,6 +47,7 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
+from scipy.ndimage import gaussian_filter1d
 from sklearn.ensemble import HistGradientBoostingClassifier
 from threadpoolctl import threadpool_limits
 
@@ -44,19 +57,67 @@ from adaptive_turnovers import (BoundaryModel, TARGET_RADIUS_SECONDS, VARIANTS, 
                                 _sample_indices, boundary_targets)
 from candidate_pipeline import HEAD_TRAIN_IDS, control_evidence  # noqa: E402
 from owner_model import FEATURE_NAMES, MODEL_SETTINGS, THREAD_LIMIT, OwnershipModel, feature_design, swap_design  # noqa: E402
+import research_possession.sportec as sportec_reader  # noqa: E402
 from research_possession.motion import summarize_player_frames  # noqa: E402
 from research_possession.tracking import Features  # noqa: E402
 
 FPS, PITCH = 25.0, (105.0, 68.0)
+BALL_SMOOTHING_FRAMES = (0,)          # widths of the Gaussian, in frames; 0 is the track as recorded. Set by --ball-smoothing
 SPORTEC = HEAD_TRAIN_IDS[:4]
 SAMPLE_IDS = HEAD_TRAIN_IDS[4:]
 
 
 def load_sportec(folder, match):
-    with np.load(Path(folder) / f"{match}.npz", allow_pickle=False) as d:
-        features = Features(d["ball_xy_m"], d["nearest_m"], d["player_speed_mps"], d["player_count"], float(d["fps"]),
-                            tuple(float(v) for v in d["pitch"]), d["player_summary"])
-        return features, d["labels"], [tuple(map(int, row)) for row in d["blocks"]]
+    """Features, labels and periods from the original DFL files, plus the player positions the smoothed views need."""
+    captured = {}
+    original = sportec_reader.summarize_player_frames
+
+    def capture(player_xy, speeds, slot_teams, pitch):
+        captured.update(xy=np.asarray(player_xy, dtype=float), teams=np.asarray(slot_teams))
+        return original(player_xy, speeds, slot_teams, pitch)
+
+    sportec_reader.summarize_player_frames = capture
+    try:
+        features, labels, blocks = sportec_reader.load_sportec(Path(folder) / match)
+    finally:
+        sportec_reader.summarize_player_frames = original
+    return features, labels, blocks, captured["xy"], captured["teams"]
+
+
+def smooth_ball(ball_xy_m, blocks, sigma_frames):
+    """Zero-phase Gaussian smoothing inside each stretch where the ball is tracked; missing frames stay missing."""
+    out = np.asarray(ball_xy_m, dtype=float).copy()
+    ok = np.isfinite(out).all(axis=1)
+    for a, b in blocks:
+        edges = np.flatnonzero(np.diff(np.r_[False, ok[a:b], False].astype(np.int8)))
+        for s, e in zip(edges[0::2], edges[1::2]):
+            if e - s >= 3:
+                out[a + s:a + e] = gaussian_filter1d(out[a + s:a + e], sigma_frames, axis=0, mode="nearest")
+    return out
+
+
+def nearest_to_ball(player_xy_m, teams, ball_xy_m):
+    """Distance from the ball to the nearest visible player of each team, as the readers compute it."""
+    visible = np.isfinite(player_xy_m).all(axis=2)
+    have = np.isfinite(ball_xy_m).all(axis=1)
+    nearest = np.full((len(ball_xy_m), 2), np.inf)
+    for start in range(0, len(ball_xy_m), 20000):
+        sl = slice(start, start + 20000)
+        dist = np.linalg.norm(player_xy_m[sl] - ball_xy_m[sl][:, None, :], axis=2)
+        for side in (0, 1):
+            nearest[sl, side] = np.where(have[sl], np.where(visible[sl] & (teams == side)[None, :], dist, np.inf).min(axis=1), np.inf)
+    return nearest
+
+
+def views(features, blocks, player_xy_m, teams):
+    """One set of predictor fields per smoothing width."""
+    for sigma in BALL_SMOOTHING_FRAMES:
+        if sigma == 0:
+            yield features
+            continue
+        ball = smooth_ball(features.ball_xy_m, blocks, sigma)
+        yield Features(ball, nearest_to_ball(player_xy_m, teams, ball), features.player_speed_mps, features.player_count,
+                       features.fps, features.pitch, features.player_summary)
 
 
 def load_events(folder, game):
@@ -160,7 +221,10 @@ def build_features(xy, ball, teams, blocks):
 
 
 def training_rows(features, labels, blocks):
-    """Sampled 5 Hz rows for both heads, with team-swap augmentation and per-match class balance."""
+    """Sampled 5 Hz rows for both heads, with team-swap augmentation and per-match class balance.
+
+    A match's weight is shared equally among its smoothed views.
+    """
     design, names = feature_design(features, control_evidence(features, blocks), blocks)
     if names != FEATURE_NAMES:
         raise ValueError("feature schema differs")
@@ -178,6 +242,7 @@ def training_rows(features, labels, blocks):
             target = marks[idx]
             mirrored = target.copy()
         weight, _ = _balanced_weight(target)
+        weight = weight / len(BALL_SMOOTHING_FRAMES)
         observed = design[idx]
         rows[head] = (np.concatenate((observed, swap_design(observed))), np.concatenate((target, mirrored)),
                       np.concatenate((weight / 2, weight / 2)), int(len(target)))
@@ -185,14 +250,14 @@ def training_rows(features, labels, blocks):
 
 
 def fit(rows, ids, head):
-    x = np.concatenate([rows[i][head][0] for i in ids])
-    y = np.concatenate([rows[i][head][1] for i in ids])
-    w = np.concatenate([rows[i][head][2] for i in ids])
+    x = np.concatenate([view[head][0] for i in ids for view in rows[i]])
+    y = np.concatenate([view[head][1] for i in ids for view in rows[i]])
+    w = np.concatenate([view[head][2] for i in ids for view in rows[i]])
     scale = len(w) / w.sum()
     classifier = HistGradientBoostingClassifier(**MODEL_SETTINGS)
     with threadpool_limits(limits=THREAD_LIMIT):
         classifier.fit(x, y, sample_weight=w * scale)
-    counts = {i: {"sampled_original_rows": rows[i][head][3], "augmented_rows": 2 * rows[i][head][3]} for i in ids}
+    counts = {i: {"sampled_original_rows": rows[i][0][head][3], "augmented_rows": 2 * rows[i][0][head][3] * len(rows[i])} for i in ids}
     settings = {**MODEL_SETTINGS, "thread_limit": THREAD_LIMIT, "sample_target_hz": 5, "global_weight_scale": float(scale),
                 "total_augmented_rows": int(len(y)), "feature_count": len(FEATURE_NAMES), "probabilities_calibrated": False,
                 "augmentation": "exact team swap; half weight per copy"}
@@ -208,19 +273,31 @@ def main():
     parser.add_argument("--sportec", required=True)
     parser.add_argument("--metrica", required=True)
     parser.add_argument("--out", required=True)
+    parser.add_argument("--ball-smoothing", default="0", help="comma-separated Gaussian widths in frames; 0 is the track as recorded")
     args = parser.parse_args()
+    global BALL_SMOOTHING_FRAMES
+    BALL_SMOOTHING_FRAMES = tuple(int(v) for v in args.ball_smoothing.split(","))
+    if not BALL_SMOOTHING_FRAMES or min(BALL_SMOOTHING_FRAMES) < 0 or len(set(BALL_SMOOTHING_FRAMES)) != len(BALL_SMOOTHING_FRAMES):
+        raise ValueError("--ball-smoothing takes distinct nonnegative widths")
+    smoothed = BALL_SMOOTHING_FRAMES != (0,)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=False)
     rows = {}
     for match in SPORTEC:
-        rows[match] = training_rows(*load_sportec(args.sportec, match))
+        features, labels, blocks, player_xy, teams = load_sportec(args.sportec, match)
+        rows[match] = [training_rows(view, labels, blocks) for view in views(features, blocks, player_xy, teams)]
     for game, name in enumerate(SAMPLE_IDS, start=1):
         xy, ball, teams = load_tracking(args.metrica, game)
         labels, blocks = event_labels(load_events(args.metrica, game), len(xy))
-        rows[name] = training_rows(build_features(xy, ball, teams, blocks), labels, blocks)
-    summary = {"train_ids": list(HEAD_TRAIN_IDS), "settings": MODEL_SETTINGS, "heads": {}}
-    for head, filename in (("owner", "owner-model.joblib"), ("boundary", "full330-boundary.joblib")):
+        features = build_features(xy, ball, teams, blocks)
+        rows[name] = [training_rows(view, labels, blocks) for view in views(features, blocks, xy * np.array(PITCH), teams)]
+    summary = {"train_ids": list(HEAD_TRAIN_IDS), "settings": MODEL_SETTINGS, "ball_smoothing_frames": list(BALL_SMOOTHING_FRAMES), "heads": {}}
+    names = ((("owner", "owner-model-smoothed.joblib"), ("boundary", "full330-boundary-smoothed.joblib")) if smoothed
+             else (("owner", "owner-model.joblib"), ("boundary", "full330-boundary.joblib")))
+    for head, filename in names:
         model = fit(rows, HEAD_TRAIN_IDS, head)
+        if smoothed:
+            model.settings["ball_smoothing_frames"] = list(BALL_SMOOTHING_FRAMES)
         joblib.dump(model, out / filename)
         summary["heads"][head] = {"file": filename, "sha256": hashlib.sha256((out / filename).read_bytes()).hexdigest(),
                                   "training_counts": model.training_counts, "total_augmented_rows": model.settings["total_augmented_rows"]}
