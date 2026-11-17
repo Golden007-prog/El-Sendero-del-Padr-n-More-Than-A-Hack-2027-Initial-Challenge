@@ -25,8 +25,8 @@
       "sha256": "05ff6b17d722b430816e8a82574df91f67ec78f1ce890e697c120cbfd9bfd8ef"
     },
     "README.md": {
-      "bytes": 17739,
-      "sha256": "53137b45c2fc33bd287dd1c8426df8fb2107d1bd85b936eb73222543098e4492"
+      "bytes": 18909,
+      "sha256": "e8026b164702d2e1c5f1b75a6a640533bc3036d518188b3b4713b6229e876bf7"
     },
     "adaptive_turnovers.py": {
       "bytes": 15459,
@@ -65,8 +65,8 @@
       "sha256": "d6a7b17bd8cde47bc901009788c3d67071a4b58c95176659a271410dd4cee9f9"
     },
     "docs/technical-report.pdf": {
-      "bytes": 571237,
-      "sha256": "15188681a3ca09966ac96f75f13c0a637e5eea41d661e421263bd86f0633095f"
+      "bytes": 571679,
+      "sha256": "06c81d5650657fc5aff2a730ce369cbe5043577ffa778a777ae00f327e2ca303"
     },
     "documented_structure.py": {
       "bytes": 1420,

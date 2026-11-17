@@ -61,6 +61,17 @@ python -m venv .venv
   "outputs/El Sendero del Padrón.csv"
 ```
 
+On Linux or macOS the same four steps are:
+
+```bash
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r requirements-research-lock.txt
+.venv/bin/python -I -B infer_candidate.py --data-dir "<authorized-bundle-root>" --output "outputs/El Sendero del Padrón.csv"
+.venv/bin/python -I -B evaluation/validate_submission.py "outputs/El Sendero del Padrón.csv"
+```
+
+The interpreter must be CPython 3.11.9 exactly; the package refuses to run otherwise. We have not run these commands on Linux or macOS ourselves. What we did check is that the output does not depend on the processor's instruction set or on the linear-algebra kernel: on the test machine the file is byte-identical with NumPy's optional CPU features disabled, with a generic BLAS kernel, single-threaded, and with all three together.
+
 The organizer-provided bundle must have this layout; [DATA.md](DATA.md) explains authorized access and local placement:
 
 ```text
@@ -135,7 +146,7 @@ No model was trained or fitted on the supplied match, and no label of it was use
 
 **One pipeline check, and a rule that was withdrawn.** The official evaluator was run once on the public five-minute window, on the second edition, to confirm frame alignment and label meaning: macroF1 `0.8504`, alive/dead F1 `0.9687`, matched hand-overs a median 2 frames late, spellF1 `0.4182` on 17 possessions with 27 predicted. Seventeen possessions cannot rank methods. Because that reading showed more predicted possessions than reference ones, a rule absorbing opponent runs under three seconds was added and published as a third edition. Two external benchmarks then showed it removes real possessions (Sportec development 0.538 without the rule, 0.475 with it; Metrica sample matches 0.610 without, 0.560 with), and the delay figures above say the same. The rule was withdrawn and is not in this release. The released file was not scored on the public window.
 
-**Further checks on 17 November (the file did not change).** Three more tests were run on external matches only, each against a gate written in advance. First, the ball was removed from held-out external matches as often as the supplied tracking loses it (12% of live frames in gaps with a 2.5 s median, 76% of dead frames). SpellF1 falls by 0.03 to 0.09, most when the loss falls on hand-overs, and neither a 2 s nor a 3 s minimum-control rule helps (best change +0.003 against a required +0.010). Second, heads fitted on all ten external matches gain 0.010 on the Sportec matches and lose 0.007 on the Metrica sample matches; the gate allowed a loss of 0.005, so they were not adopted. Third, heads fitted on clean plus ball-loss views gain 0.007 to 0.009 under random loss but lose 0.013 on clean Metrica tracking and 0.010 when the loss falls on hand-overs; not adopted. The [technical report](docs/technical-report.pdf) shows each result as a chart.
+**Further checks on 17 November (the file did not change).** Three more tests were run on external matches only, each against a gate written in advance. First, the ball was removed from held-out external matches as often as the supplied tracking loses it (12% of live frames in gaps with a 2.5 s median, 76% of dead frames). SpellF1 falls by 0.03 to 0.09, most when the loss falls on hand-overs, and neither a 2 s nor a 3 s minimum-control rule helps (best change +0.003 against a required +0.010). Second, heads fitted on all ten external matches gain 0.010 on the Sportec matches and lose 0.007 on the Metrica sample matches; the gate allowed a loss of 0.005, so they were not adopted. Third, heads fitted on clean plus ball-loss views gain 0.007 to 0.009 under random loss but lose 0.013 on clean Metrica tracking and 0.010 when the loss falls on hand-overs; not adopted. Fourth, the three dead-ball models were refitted with Metrica's sample matches added, taking dead ball where the provider's tracking has no ball. The refit on the four Sportec matches reproduced the released models exactly; with the Metrica matches added, held-out Metrica matches changed by -0.002 and the Sportec matches by -0.007, so the released models were kept. The [technical report](docs/technical-report.pdf) shows each result as a chart.
 
 Smart Tagging and the second-camera tracking were analysed and not used for the file. Tagged set pieces already coincide with predicted restarts in 53 of 58 cases, and the broadcast ball fills only 5–9% of frames where the tactical ball is missing. The [technical report](docs/technical-report.pdf) lists every asset and idea that was tried and dropped, with the test and the result, and the history of the published editions.
 
